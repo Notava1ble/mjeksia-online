@@ -1,4 +1,4 @@
-import { themes } from "../constants/theme";
+import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
 import { Stack } from "expo-router";
@@ -11,9 +11,28 @@ export default function RootLayout() {
 
   return (
     <>
-      <View style={[themes[colorScheme ?? "light"], { flex: 1 }]}>
-        <Stack>
+      <View
+        style={[themes[colorScheme ?? "light"], { flex: 1 }]}
+        className="bg-background"
+      >
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: getThemeColor("--background", colorScheme),
+            },
+            headerShadowVisible: false,
+            headerTintColor: getThemeColor("--foreground", colorScheme),
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="arena"
+            options={{
+              title: "Arena",
+              animation: "fade",
+              headerShown: true,
+            }}
+          />
         </Stack>
       </View>
       <StatusBar style={colorScheme === "light" ? "dark" : "light"} />

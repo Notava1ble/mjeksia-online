@@ -14,6 +14,21 @@ export default function Arena() {
     undefined
   );
 
+  const onGuess = (
+    letter: typeof guess,
+    answer: typeof guess,
+    explanation: string
+  ) => {
+    if (!guess) {
+      setGuess(letter);
+      return;
+    }
+
+    if (letter === answer) {
+      alert(explanation);
+    }
+  };
+
   const onNext = () => {
     setGuess(undefined);
     setCurrentQuestion(
@@ -25,19 +40,25 @@ export default function Arena() {
     <View className="flex-1 bg-background p-6 justify-between">
       <View>
         <Text className="text-muted-foreground mb-2">
-          Pyetja {currentQuestion.id}
+          Pyetja {currentQuestion.id} - {currentQuestion.subject}
         </Text>
         <Text className="text-foreground text-lg leading-6">
           {currentQuestion.question_text}
         </Text>
 
-        {currentQuestion.image && (
-          <View className="mt-4">
-            <DynamicImage
-              source={imageMap[currentQuestion.image as keyof typeof imageMap]}
-            />
-          </View>
-        )}
+        <View className="mt-4 h-64 w-full border-2 border-muted rounded-md items-center justify-center">
+          {currentQuestion.image ? (
+            <View className="px-12">
+              <DynamicImage
+                source={
+                  imageMap[currentQuestion.image as keyof typeof imageMap]
+                }
+              />
+            </View>
+          ) : (
+            <Text className="text-muted-foreground">No Image</Text>
+          )}
+        </View>
         <View className="gap-3 mt-6">
           <Pressable
             className={cn(
@@ -47,7 +68,9 @@ export default function Arena() {
                 currentQuestion.answer === "A" &&
                 "bg-green-600 border-green-900"
             )}
-            onPress={() => setGuess("A")}
+            onPress={() =>
+              onGuess("A", currentQuestion.answer, currentQuestion.explanation)
+            }
           >
             <Text className="text-foreground">
               A: {currentQuestion.options.A}
@@ -61,7 +84,9 @@ export default function Arena() {
                 currentQuestion.answer === "B" &&
                 "bg-green-600 border-green-900"
             )}
-            onPress={() => setGuess("B")}
+            onPress={() =>
+              onGuess("B", currentQuestion.answer, currentQuestion.explanation)
+            }
           >
             <Text className="text-foreground">
               B: {currentQuestion.options.B}
@@ -75,7 +100,9 @@ export default function Arena() {
                 currentQuestion.answer === "C" &&
                 "bg-green-600 border-green-900"
             )}
-            onPress={() => setGuess("C")}
+            onPress={() =>
+              onGuess("C", currentQuestion.answer, currentQuestion.explanation)
+            }
           >
             <Text className="text-foreground">
               C: {currentQuestion.options.C}
@@ -89,7 +116,9 @@ export default function Arena() {
                 currentQuestion.answer === "D" &&
                 "bg-green-600 border-green-900"
             )}
-            onPress={() => setGuess("D")}
+            onPress={() =>
+              onGuess("D", currentQuestion.answer, currentQuestion.explanation)
+            }
           >
             <Text className="text-foreground">
               D: {currentQuestion.options.D}

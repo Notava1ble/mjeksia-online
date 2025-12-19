@@ -9,7 +9,7 @@ export default function DynamicImage({ source }: any) {
   return (
     <Image
       source={source}
-      style={{ width: "100%", aspectRatio }}
+      style={{ width: "100%", aspectRatio, borderRadius: 2 }}
       contentFit="contain"
     />
   );

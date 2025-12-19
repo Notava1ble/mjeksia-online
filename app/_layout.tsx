@@ -1,8 +1,11 @@
 import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
+import { drizzle } from "drizzle-orm/expo-sqlite";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as SQLite from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
@@ -12,7 +15,13 @@ import { Platform, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
+const expo = SQLite.openDatabaseSync("db.db");
+
+const db = drizzle(expo);
+
 export default function RootLayout() {
+  useDrizzleStudio(expo);
+
   const { colorScheme, setColorScheme } = useColorScheme();
   const [isReady, setIsReady] = useState(false);
   const hasHiddenSplash = useRef(false);

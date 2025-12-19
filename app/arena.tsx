@@ -1,6 +1,6 @@
 import DynamicImage from "@/components/DynamicImage";
-import { imageMap } from "@/data/imageMap";
-import questions, { questionType } from "@/data/questions";
+import { imageMap } from "@/db/imageMap";
+import questions, { questionType } from "@/db/questions";
 import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";

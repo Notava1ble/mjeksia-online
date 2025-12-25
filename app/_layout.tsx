@@ -10,6 +10,7 @@ import * as SystemUI from "expo-system-ui";
 import { useColorScheme } from "nativewind";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,40 +48,52 @@ export default function RootLayout() {
   if (!isReady) return null;
 
   return (
-    <View
-      key={colorScheme}
-      onLayout={onLayoutRootView}
-      style={[themes[colorScheme ?? "light"], { flex: 1 }]}
-      className="bg-background"
-    >
-      <Suspense fallback={<ActivityIndicator size="large" />}>
-        <SQLiteProvider
-          databaseName="questions.db"
-          assetSource={{ assetId: require("@/assets/questions.db") }}
-          useSuspense
+    <SafeAreaProvider>
+      <View
+        key={colorScheme}
+        onLayout={onLayoutRootView}
+        style={[themes[colorScheme ?? "light"], { flex: 1 }]}
+        className="bg-background"
+      >
+        <StatusBar
+          style={colorScheme === "light" ? "dark" : "light"}
+          translucent={false}
+          backgroundColor={getThemeColor("--background", colorScheme)}
+        />
+        <Suspense
+          fallback={
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size="large" />
+            </View>
+          }
         >
-          <Stack
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: getThemeColor("--background", colorScheme),
-              },
-              headerShadowVisible: false,
-              headerTintColor: getThemeColor("--foreground", colorScheme),
-            }}
+          <SQLiteProvider
+            databaseName="questions.db"
+            assetSource={{ assetId: require("@/assets/questions.db") }}
+            useSuspense
           >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="arena"
-              options={{
-                title: "Arena",
-                animation: "fade",
-                headerShown: true,
+            <Stack
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: getThemeColor("--background", colorScheme),
+                },
+                headerShadowVisible: false,
+                headerTintColor: getThemeColor("--foreground", colorScheme),
               }}
-            />
-          </Stack>
-          <StatusBar style={colorScheme === "light" ? "dark" : "light"} />
-        </SQLiteProvider>
-      </Suspense>
-    </View>
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="arena"
+                options={{
+                  title: "Arena",
+                  animation: "fade",
+                  headerShown: true,
+                }}
+              />
+            </Stack>
+          </SQLiteProvider>
+        </Suspense>
+      </View>
+    </SafeAreaProvider>
   );
 }

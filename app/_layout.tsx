@@ -1,27 +1,19 @@
 import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import * as SQLite from "expo-sqlite";
+import { SQLiteProvider } from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import { useColorScheme } from "nativewind";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Platform, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
-const expo = SQLite.openDatabaseSync("db.db");
-
-const db = drizzle(expo);
-
 export default function RootLayout() {
-  useDrizzleStudio(expo);
-
   const { colorScheme, setColorScheme } = useColorScheme();
   const [isReady, setIsReady] = useState(false);
   const hasHiddenSplash = useRef(false);
@@ -55,33 +47,40 @@ export default function RootLayout() {
   if (!isReady) return null;
 
   return (
-    <>
-      <View
-        onLayout={onLayoutRootView}
-        style={[themes[colorScheme ?? "light"], { flex: 1 }]}
-        className="bg-background"
-      >
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: getThemeColor("--background", colorScheme),
-            },
-            headerShadowVisible: false,
-            headerTintColor: getThemeColor("--foreground", colorScheme),
-          }}
+    <View
+      key={colorScheme}
+      onLayout={onLayoutRootView}
+      style={[themes[colorScheme ?? "light"], { flex: 1 }]}
+      className="bg-background"
+    >
+      <Suspense fallback={<ActivityIndicator size="large" />}>
+        <SQLiteProvider
+          databaseName="questions.db"
+          assetSource={{ assetId: require("@/assets/questions.db") }}
+          useSuspense
         >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="arena"
-            options={{
-              title: "Arena",
-              animation: "fade",
-              headerShown: true,
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: getThemeColor("--background", colorScheme),
+              },
+              headerShadowVisible: false,
+              headerTintColor: getThemeColor("--foreground", colorScheme),
             }}
-          />
-        </Stack>
-      </View>
-      <StatusBar style={colorScheme === "light" ? "dark" : "light"} />
-    </>
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="arena"
+              options={{
+                title: "Arena",
+                animation: "fade",
+                headerShown: true,
+              }}
+            />
+          </Stack>
+          <StatusBar style={colorScheme === "light" ? "dark" : "light"} />
+        </SQLiteProvider>
+      </Suspense>
+    </View>
   );
 }

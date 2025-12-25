@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "context": "repomix app components constants lib --style markdown -o context.md"
+    "context": "repomix app components constants lib db --style markdown -o context.md"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

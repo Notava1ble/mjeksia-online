@@ -1,9 +1,10 @@
 import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { SQLiteProvider } from "expo-sqlite";
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import Storage from "expo-sqlite/kv-store";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
@@ -72,28 +73,41 @@ export default function RootLayout() {
             assetSource={{ assetId: require("@/assets/questions.db") }}
             useSuspense
           >
-            <Stack
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: getThemeColor("--background", colorScheme),
-                },
-                headerShadowVisible: false,
-                headerTintColor: getThemeColor("--foreground", colorScheme),
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="arena"
-                options={{
-                  title: "Arena",
-                  animation: "fade",
-                  headerShown: true,
-                }}
-              />
-            </Stack>
+            <Content colorScheme={colorScheme} />
           </SQLiteProvider>
         </Suspense>
       </View>
     </SafeAreaProvider>
+  );
+}
+
+function Content({
+  colorScheme,
+}: {
+  colorScheme: "light" | "dark" | undefined;
+}) {
+  const db = useSQLiteContext();
+  useDrizzleStudio(db);
+
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: getThemeColor("--background", colorScheme),
+        },
+        headerShadowVisible: false,
+        headerTintColor: getThemeColor("--foreground", colorScheme),
+      }}
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="arena"
+        options={{
+          title: "Arena",
+          animation: "fade",
+          headerShown: true,
+        }}
+      />
+    </Stack>
   );
 }

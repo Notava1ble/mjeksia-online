@@ -24,3 +24,8 @@ export const questions = sqliteTable(
   },
   (table) => [unique("unique_exam_question").on(table.exam_title, table.subId)]
 );
+
+export const math_svgs = sqliteTable("math_svgs", {
+  hash: text("hash").primaryKey(),
+  xml: text("xml"),
+});

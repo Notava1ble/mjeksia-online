@@ -1,5 +1,7 @@
 import DynamicImage from "@/components/DynamicImage";
+import MathText from "@/components/MathText";
 import { imageMap } from "@/constants/imageMap";
+import { getThemeColor } from "@/constants/theme";
 import * as schema from "@/db/schema";
 import { questions } from "@/db/schema";
 import { cn } from "@/lib/utils";
@@ -7,6 +9,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { sql, type InferSelectModel } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
+import { useColorScheme } from "nativewind";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,6 +20,7 @@ import {
 } from "react-native";
 
 export default function Arena() {
+  const { colorScheme } = useColorScheme();
   const db = useSQLiteContext();
 
   // Memoize the drizzle instance so it doesn't re-create on every render
@@ -78,10 +82,11 @@ export default function Arena() {
         <Text className="text-muted-foreground mb-2">
           Pyetja {currentQuestion.subId} - {currentQuestion.exam_title}
         </Text>
-        <Text className="text-foreground text-lg leading-6 font-medium">
-          {currentQuestion.question_text}
-        </Text>
-
+        <MathText
+          color={getThemeColor("--foreground", colorScheme)}
+          text={currentQuestion.question_text}
+          className="text-foreground text-lg leading-6 font-medium"
+        />
         <View className="mt-4 h-64 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden">
           {currentQuestion.image ? (
             <View className="px-6 w-full">
@@ -95,7 +100,6 @@ export default function Arena() {
             <Text className="text-muted-foreground italic">Pa figurë</Text>
           )}
         </View>
-
         <View className="gap-3 mt-6">
           {(["A", "B", "C", "D"] as const).map((letter) => {
             const isCorrect = currentQuestion.answer === letter;
@@ -134,7 +138,6 @@ export default function Arena() {
             );
           })}
         </View>
-
         {guess && (
           <View className="mt-4 p-4 bg-accent/20 rounded-lg border border-accent/30">
             <Text className="text-accent-foreground font-bold mb-1">

@@ -1,8 +1,7 @@
 import * as schema from "@/db/schema";
+import { useDrizzle } from "@/hooks/useDrizzle";
 import { getHashedPiece } from "@/lib/utils";
 import { inArray } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useMemo, useState } from "react";
 import { Text } from "react-native";
 import { SvgXml } from "react-native-svg";
@@ -72,8 +71,7 @@ const MathText = ({
   className?: string;
   color: string;
 }) => {
-  const db = useSQLiteContext();
-  const drizzleDb = useMemo(() => drizzle(db, { schema }), [db]);
+  const drizzleDb = useDrizzle();
 
   // 1. Split text and calculate hashes
   const mathPieces = useMemo(() => {

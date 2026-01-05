@@ -4,13 +4,12 @@ import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
 import * as schema from "@/db/schema";
 import { questions } from "@/db/schema";
+import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { sql, type InferSelectModel } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { useSQLiteContext } from "expo-sqlite";
 import { useColorScheme } from "nativewind";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -21,10 +20,7 @@ import {
 
 export default function Arena() {
   const { colorScheme } = useColorScheme();
-  const db = useSQLiteContext();
-
-  // Memoize the drizzle instance so it doesn't re-create on every render
-  const drizzleDb = useMemo(() => drizzle(db, { schema }), [db]);
+  const drizzleDb = useDrizzle();
 
   const [currentQuestion, setCurrentQuestion] = useState<
     InferSelectModel<typeof questions> | undefined
@@ -56,7 +52,6 @@ export default function Arena() {
   }, []);
 
   const onGuess = (letter: "A" | "B" | "C" | "D") => {
-    // Prevent changing guess once selected
     if (!guess) {
       setGuess(letter);
     }
@@ -64,7 +59,7 @@ export default function Arena() {
 
   const onNext = () => {
     setGuess(undefined);
-    loadNewQuestion(); // Fetch next random question from DB
+    loadNewQuestion();
   };
 
   // Show loading state while DB is fetching the first question
@@ -120,20 +115,19 @@ export default function Arena() {
                 )}
                 onPress={() => onGuess(letter)}
               >
-                <Text
+                <MathText
                   className={cn(
                     "text-foreground",
-                    guess && isCorrect && "text-white font-bold",
-                    isSelected && !isCorrect && "text-white"
+                    guess && isCorrect && "text-foreground font-bold",
+                    isSelected && !isCorrect && "text-foreground"
                   )}
-                >
-                  {letter}:{" "}
-                  {
+                  text={`${letter}: ${
                     currentQuestion[
                       `option_${letter.toLowerCase()}` as keyof typeof currentQuestion
                     ]
-                  }
-                </Text>
+                  }`}
+                  color={getThemeColor("--foreground", colorScheme)}
+                />
               </Pressable>
             );
           })}

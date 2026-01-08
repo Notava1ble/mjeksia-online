@@ -3,81 +3,40 @@ import { useDrizzle } from "@/hooks/useDrizzle";
 import { getHashedPiece } from "@/lib/utils";
 import { inArray } from "drizzle-orm";
 import React, { useEffect, useMemo, useState } from "react";
-import { Text } from "react-native";
+import { Text, type TextStyle } from "react-native";
 import { SvgXml } from "react-native-svg";
 
-// This should match the font size of your wrapping Text component
-const BASE_FONT_SIZE = 16;
+interface MathSvgData {
+  xml: string;
+  w: number;
+  h: number;
+  v: number;
+}
 
-const MathPlaceholder = ({
-  xml,
-  color,
-}: {
-  xml: string | null;
-  color: string;
-}) => {
-  if (!xml) return <Text>... </Text>;
+interface MathTextProps {
+  text: string;
+  color?: string;
+  fontSize?: number;
+  className?: string;
+  style?: TextStyle;
+}
 
-  // 1. Parse viewBox: [minX, minY, width, height]
-  // Example: "0 -442 640 453"
-  const viewBoxMatch = xml.match(/viewBox="([^"]+)"/);
-  const viewBox = viewBoxMatch
-    ? viewBoxMatch[1].split(/\s+/).map(Number)
-    : null;
-
-  if (!viewBox || viewBox.length !== 4) return <Text>... </Text>;
-
-  const [vbX, vbY, vbW, vbH] = viewBox;
-
-  /**
-   * MATHJAX SCALING:
-   * 1000 units in viewBox = 1em (BASE_FONT_SIZE).
-   * This prevents small chars from being "blown up".
-   */
-  const scale = BASE_FONT_SIZE / 1000;
-  const width = vbW * scale;
-  const height = vbH * scale;
-
-  /**
-   * BASELINE ALIGNMENT:
-   * MathJax baseline is at y=0.
-   * vbY is the distance from the top of the viewBox to y=0 (usually negative).
-   * Descent = (Total Height + vbY) -> the part below the baseline.
-   */
-  const descent = (vbH + vbY) * scale;
-
-  return (
-    <SvgXml
-      xml={xml}
-      width={width}
-      height={height}
-      color={color}
-      style={{
-        // Shift the SVG down so its internal baseline matches the text baseline
-        top: descent,
-        // Offset the shift so it doesn't add extra space to the line height
-        marginBottom: -descent,
-      }}
-    />
-  );
-};
+// MathJax LiteAdaptor defaults 1ex to roughly 0.5em
+const EX_RATIO = 0.5;
 
 const MathText = ({
   text,
   className,
-  color,
-}: {
-  text: string;
-  className?: string;
-  color: string;
-}) => {
+  style,
+  color = "black",
+  fontSize = 16,
+}: MathTextProps) => {
   const drizzleDb = useDrizzle();
 
-  // 1. Split text and calculate hashes
+  // 1. Split text into pieces
   const mathPieces = useMemo(() => {
     return text.split(/(\$[^$]+\$)/g).map((piece, index) => {
       const isMath = piece.startsWith("$") && piece.endsWith("$");
-      // Remove $ symbols for hashing (standard for MathJax DB entries)
       const rawFormula = isMath ? piece.slice(1, -1) : piece;
       return {
         id: index,
@@ -88,29 +47,45 @@ const MathText = ({
     });
   }, [text]);
 
-  const [svgMap, setSvgMap] = useState<Record<string, string>>({});
+  // 2. Local state for SVG data
+  const [svgDataMap, setSvgDataMap] = useState<Record<string, MathSvgData>>({});
 
-  // 2. Bulk fetch SVGs from DB
+  // 3. Bulk fetch missing SVGs
   useEffect(() => {
     const fetchSvgs = async () => {
       const hashesToFetch = mathPieces
-        .filter((p) => p.isMath && p.hash && !svgMap[p.hash])
+        .filter((p) => p.isMath && p.hash && !svgDataMap[p.hash])
         .map((p) => p.hash as string);
 
       if (hashesToFetch.length === 0) return;
 
       try {
         const results = await drizzleDb
-          .select()
+          .select({
+            hash: schema.math_svgs.hash,
+            xml: schema.math_svgs.xml,
+            w: schema.math_svgs.w,
+            h: schema.math_svgs.h,
+            v: schema.math_svgs.v,
+          })
           .from(schema.math_svgs)
           .where(inArray(schema.math_svgs.hash, hashesToFetch));
 
         if (results.length > 0) {
-          const newMap: Record<string, string> = {};
-          results.forEach((row) => {
-            if (row.hash && row.xml) newMap[row.hash] = row.xml;
+          setSvgDataMap((prev) => {
+            const next = { ...prev };
+            results.forEach((row) => {
+              if (row.hash && row.xml) {
+                next[row.hash] = {
+                  xml: row.xml,
+                  w: row.w,
+                  h: row.h,
+                  v: row.v,
+                };
+              }
+            });
+            return next;
           });
-          setSvgMap((prev) => ({ ...prev, ...newMap }));
         }
       } catch (error) {
         console.error("DB Fetch Error:", error);
@@ -120,19 +95,50 @@ const MathText = ({
     fetchSvgs();
   }, [mathPieces, drizzleDb]);
 
+  // 4. Calculate scaling factor (Pixels per 1 MathJax ex)
+  const scalePx = fontSize * EX_RATIO;
+
   return (
-    <Text className={className} style={{ fontSize: BASE_FONT_SIZE }}>
-      {mathPieces.map((piece) =>
-        piece.isMath ? (
-          <MathPlaceholder
+    <Text className={className} style={[{ fontSize, color }, style]}>
+      {mathPieces.map((piece) => {
+        // --- CASE A: Regular Text ---
+        if (!piece.isMath) {
+          return piece.content;
+        }
+
+        // --- CASE B: Math ---
+        const data = piece.hash ? svgDataMap[piece.hash] : null;
+
+        if (!data) {
+          // Placeholder while loading
+          return <Text key={piece.id}>...</Text>;
+        }
+
+        // Dimensions in pixels
+        const widthPx = data.w * scalePx;
+        const heightPx = data.h * scalePx;
+
+        // Vertical Align Calculation:
+        // 'v' is usually negative (e.g., -0.2).
+        // React Native aligns the SVG bottom to the text baseline.
+        // To shift it DOWN, we need a positive Y translation.
+        // We invert 'v' because 'v' is "distance from baseline", and negative means down.
+        const translateY = -1 * (data.v * scalePx);
+
+        return (
+          <SvgXml
             key={piece.id}
+            xml={data.xml}
+            width={widthPx}
+            height={heightPx}
             color={color}
-            xml={piece.hash ? svgMap[piece.hash] : null}
+            style={{
+              // Apply the shift to align the math baseline with text baseline
+              transform: [{ translateY: translateY }],
+            }}
           />
-        ) : (
-          piece.content
-        )
-      )}
+        );
+      })}
     </Text>
   );
 };

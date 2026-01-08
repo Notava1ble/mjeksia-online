@@ -99,7 +99,7 @@ const MathText = ({
   const scalePx = fontSize * EX_RATIO;
 
   return (
-    <Text className={className} style={[{ fontSize, color }, style]}>
+    <Text className={className} style={[style]}>
       {mathPieces.map((piece) => {
         // --- CASE A: Regular Text ---
         if (!piece.isMath) {

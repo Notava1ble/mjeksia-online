@@ -51,6 +51,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <View
+        key={colorScheme}
         onLayout={onLayoutRootView}
         style={[themes[colorScheme ?? "light"], { flex: 1 }]}
         className="bg-background"

@@ -133,14 +133,16 @@ export default function Arena() {
           })}
         </View>
         {guess && (
-          <View className="mt-4 p-4 bg-accent/20 rounded-lg border border-accent/30">
+          <View className="mt-4 p-4 bg-accent rounded-lg border border-accent/30">
             <Text className="text-accent-foreground font-bold mb-1">
               Shpjegimi:
             </Text>
-            <Text className="text-accent-foreground/90 text-sm">
-              {currentQuestion.explanation ||
-                "Nuk ka shpjegim për këtë pyetje."}
-            </Text>
+            <MathText
+              color={getThemeColor("--accent-foreground", colorScheme, 0.9)}
+              text={currentQuestion.explanation}
+              className="text-accent-foreground/90 text-sm"
+              fontSize={14}
+            />
           </View>
         )}
       </ScrollView>

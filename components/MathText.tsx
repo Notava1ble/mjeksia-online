@@ -21,7 +21,6 @@ interface MathTextProps {
   style?: TextStyle;
 }
 
-// MathJax LiteAdaptor defaults 1ex to roughly 0.5em
 const EX_RATIO = 0.5;
 
 const MathText = ({
@@ -33,7 +32,6 @@ const MathText = ({
 }: MathTextProps) => {
   const drizzleDb = useDrizzle();
 
-  // 1. Split text into pieces
   const mathPieces = useMemo(() => {
     return text.split(/(\$[^$]+\$)/g).map((piece, index) => {
       const isMath = piece.startsWith("$") && piece.endsWith("$");
@@ -47,10 +45,8 @@ const MathText = ({
     });
   }, [text]);
 
-  // 2. Local state for SVG data
   const [svgDataMap, setSvgDataMap] = useState<Record<string, MathSvgData>>({});
 
-  // 3. Bulk fetch missing SVGs
   useEffect(() => {
     const fetchSvgs = async () => {
       const hashesToFetch = mathPieces
@@ -95,35 +91,29 @@ const MathText = ({
     fetchSvgs();
   }, [mathPieces, drizzleDb]);
 
-  // 4. Calculate scaling factor (Pixels per 1 MathJax ex)
   const scalePx = fontSize * EX_RATIO;
 
   return (
     <Text className={className} style={[style]}>
       {mathPieces.map((piece) => {
-        // --- CASE A: Regular Text ---
         if (!piece.isMath) {
           return piece.content;
         }
 
-        // --- CASE B: Math ---
         const data = piece.hash ? svgDataMap[piece.hash] : null;
 
         if (!data) {
-          // Placeholder while loading
           return <Text key={piece.id}>...</Text>;
         }
 
-        // Dimensions in pixels
         const widthPx = data.w * scalePx;
         const heightPx = data.h * scalePx;
-
-        // Vertical Align Calculation:
-        // 'v' is usually negative (e.g., -0.2).
-        // React Native aligns the SVG bottom to the text baseline.
-        // To shift it DOWN, we need a positive Y translation.
-        // We invert 'v' because 'v' is "distance from baseline", and negative means down.
         const translateY = -1 * (data.v * scalePx);
+
+        // Use balanced margins on both sides to keep the SVG visually centered
+        // within its line while still preventing overlap with adjacent lines.
+        // This ensures fractions and other tall math don't appear offset.
+        const verticalMargin = Math.abs(translateY);
 
         return (
           <SvgXml
@@ -133,8 +123,9 @@ const MathText = ({
             height={heightPx}
             color={color}
             style={{
-              // Apply the shift to align the math baseline with text baseline
-              transform: [{ translateY: translateY }],
+              transform: [{ translateY }],
+              marginTop: verticalMargin,
+              marginBottom: verticalMargin,
             }}
           />
         );

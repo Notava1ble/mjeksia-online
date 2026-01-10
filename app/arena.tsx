@@ -66,14 +66,19 @@ export default function Arena() {
   if (!currentQuestion) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
-        <ActivityIndicator size="large" color="#EAB308" />
+        <ActivityIndicator
+          size="large"
+          color={getThemeColor("--muted-foreground", colorScheme)}
+        />
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-background justify-between">
-      <ScrollView contentContainerStyle={{ padding: 24 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+      >
         <Text className="text-muted-foreground mb-2">
           Pyetja {currentQuestion.subId} - {currentQuestion.exam_title}
         </Text>
@@ -82,7 +87,7 @@ export default function Arena() {
           text={currentQuestion.question_text}
           className="text-foreground text-lg leading-6 font-medium"
         />
-        <View className="mt-4 h-64 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden">
+        <View className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden">
           {currentQuestion.image ? (
             <View className="px-6 w-full">
               <DynamicImage
@@ -105,7 +110,7 @@ export default function Arena() {
                 key={letter}
                 disabled={!!guess}
                 className={cn(
-                  "border-border bg-secondary border px-4 py-3 rounded-md active:opacity-80",
+                  "border-border bg-secondary border px-4 py-3 rounded-md active:opacity-80 align-middle",
                   // Red background if this was our wrong guess
                   isSelected &&
                     !isCorrect &&
@@ -117,11 +122,11 @@ export default function Arena() {
               >
                 <MathText
                   className={cn(
-                    "text-foreground",
+                    "text-foreground align-middle",
                     guess && isCorrect && "text-foreground font-bold",
                     isSelected && !isCorrect && "text-foreground"
                   )}
-                  text={`${letter}: ${
+                  text={`${
                     currentQuestion[
                       `option_${letter.toLowerCase()}` as keyof typeof currentQuestion
                     ]

@@ -24,6 +24,13 @@ const HORIZONTAL_PADDING = 16;
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+/**
+ * Renders the quiz arena screen which displays a random question, its image (with an expandable modal), selectable answer options, an explanation after answering, and a continue control to load the next question.
+ *
+ * The component fetches a random question from the database on mount and manages local UI state for the selected guess and image modal visibility.
+ *
+ * @returns The React element for the Arena screen.
+ */
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const drizzleDb = useDrizzle();

@@ -53,6 +53,14 @@ export const themes = {
   dark: vars(NAV_THEME.dark),
 };
 
+/**
+ * Retrieve a theme color string for a named token from NAV_THEME, optionally applying an alpha value.
+ *
+ * @param color - A key from `NAV_THEME.light` identifying which theme color to use
+ * @param scheme - "light" or "dark"; defaults to light when omitted
+ * @param opacity - Optional alpha value to apply; will be clamped to the range 0 to 1
+ * @returns An HSL color string if `opacity` is omitted, otherwise an RGB(A) color string with the specified alpha
+ */
 export function getThemeColor(
   color: keyof typeof NAV_THEME.light,
   scheme: "light" | "dark" | undefined,

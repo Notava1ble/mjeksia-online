@@ -15,6 +15,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
+/**
+ * Root application layout that initializes the saved theme, manages the splash screen lifecycle, and supplies global providers (safe area, status bar, and SQLite) for the app.
+ *
+ * This component reads the persisted `user_theme` and applies it, updates the Android system background color when the theme changes, and delays rendering until initialization completes. It also hides the native splash screen once the root view is laid out.
+ *
+ * @returns The root React element containing global providers and app navigation content.
+ */
 export default function RootLayout() {
   const { colorScheme, setColorScheme } = useColorScheme();
   const [isReady, setIsReady] = useState(false);

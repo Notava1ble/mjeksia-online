@@ -12,21 +12,20 @@ import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   Modal,
   Pressable,
   ScrollView,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const drizzleDb = useDrizzle();
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 

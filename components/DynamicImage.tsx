@@ -1,6 +1,6 @@
-import { Image } from "expo-image";
+import { Image, ImageSource } from "expo-image";
 
-export default function DynamicImage({ source }: { source: any }) {
+export default function DynamicImage({ source }: { source: ImageSource }) {
   return (
     <Image
       source={source}

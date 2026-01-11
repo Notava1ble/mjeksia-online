@@ -12,6 +12,8 @@ import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
+  Modal,
   Pressable,
   ScrollView,
   Text,
@@ -20,9 +22,13 @@ import {
 
 const HORIZONTAL_PADDING = 16;
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const drizzleDb = useDrizzle();
+
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const [currentQuestion, setCurrentQuestion] = useState<
     InferSelectModel<typeof questions> | undefined
@@ -78,6 +84,35 @@ export default function Arena() {
 
   return (
     <View className="flex-1 bg-background justify-between">
+      {/* --- IMAGE POPUP --- */}
+      <Modal
+        visible={isImageModalOpen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsImageModalOpen(false)}
+      >
+        <Pressable
+          className="flex-1 bg-card/80 justify-center items-center p-4"
+          onPress={() => setIsImageModalOpen(false)}
+        >
+          {/* Close Button */}
+          <View className="absolute top-12 right-6 z-10">
+            <Ionicons name="close-circle" size={40} color="white" />
+          </View>
+
+          {/* Large Image */}
+          {currentQuestion.image && (
+            <View style={{ width: SCREEN_WIDTH - 40 }}>
+              <DynamicImage
+                source={
+                  imageMap[currentQuestion.image as keyof typeof imageMap]
+                }
+              />
+            </View>
+          )}
+        </Pressable>
+      </Modal>
+
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: HORIZONTAL_PADDING,
@@ -93,19 +128,25 @@ export default function Arena() {
           className="text-foreground text-lg leading-6 font-medium"
           paddingHorizontal={HORIZONTAL_PADDING * 2}
         />
-        <View className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden">
+        <Pressable
+          onPress={() => setIsImageModalOpen(true)}
+          className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
+        >
           {currentQuestion.image ? (
-            <View className="px-6 w-full">
+            <View className="px-4 py-2 w-full items-center">
               <DynamicImage
                 source={
                   imageMap[currentQuestion.image as keyof typeof imageMap]
                 }
               />
+              <View className="absolute bottom-2 right-2 bg-black/50 p-1 rounded">
+                <Ionicons name="expand" size={16} color="white" />
+              </View>
             </View>
           ) : (
             <Text className="text-muted-foreground italic">Pa figurë</Text>
           )}
-        </View>
+        </Pressable>
         <View className="gap-3 mt-6">
           {(["A", "B", "C", "D"] as const).map((letter) => {
             const isCorrect = currentQuestion.answer === letter;

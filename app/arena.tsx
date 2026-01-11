@@ -96,7 +96,11 @@ export default function Arena() {
         >
           {/* Close Button */}
           <View className="absolute top-12 right-6 z-10">
-            <Ionicons name="close-circle" size={40} color="white" />
+            <Ionicons
+              name="close-circle"
+              size={40}
+              color={getThemeColor("--foreground", colorScheme)}
+            />
           </View>
 
           {/* Large Image */}
@@ -132,12 +136,13 @@ export default function Arena() {
           className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
         >
           {currentQuestion.image ? (
-            <View className="px-4 py-2 w-full items-center">
+            <View className="px-4 py-2 w-full h-full items-center">
               <DynamicImage
                 source={
                   imageMap[currentQuestion.image as keyof typeof imageMap]
                 }
               />
+              {/* Intentional black/white usage */}
               <View className="absolute bottom-2 right-2 bg-black/50 p-1 rounded">
                 <Ionicons name="expand" size={16} color="white" />
               </View>
@@ -178,6 +183,7 @@ export default function Arena() {
                     ]
                   }`}
                   color={getThemeColor("--foreground", colorScheme)}
+                  // Account for ScrollView padding + button padding + border
                   paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
                 />
               </Pressable>
@@ -194,6 +200,7 @@ export default function Arena() {
               text={currentQuestion.explanation}
               className="text-accent-foreground/90 text-sm"
               fontSize={14}
+              // Account for ScrollView padding + button padding + border
               paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
             />
           </View>

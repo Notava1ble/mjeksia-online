@@ -18,6 +18,8 @@ import {
   View,
 } from "react-native";
 
+const HORIZONTAL_PADDING = 16;
+
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const drizzleDb = useDrizzle();
@@ -77,7 +79,10 @@ export default function Arena() {
   return (
     <View className="flex-1 bg-background justify-between">
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: HORIZONTAL_PADDING,
+          paddingBottom: 24,
+        }}
       >
         <Text className="text-muted-foreground mb-2">
           Pyetja {currentQuestion.subId} - {currentQuestion.exam_title}
@@ -86,6 +91,7 @@ export default function Arena() {
           color={getThemeColor("--foreground", colorScheme)}
           text={currentQuestion.question_text}
           className="text-foreground text-lg leading-6 font-medium"
+          paddingHorizontal={HORIZONTAL_PADDING * 2}
         />
         <View className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden">
           {currentQuestion.image ? (
@@ -110,7 +116,7 @@ export default function Arena() {
                 key={letter}
                 disabled={!!guess}
                 className={cn(
-                  "border-border bg-secondary border px-4 py-3 rounded-md active:opacity-80 align-middle",
+                  "border-border bg-secondary border px-4 py-3 rounded-md active:opacity-80 justify-center",
                   // Red background if this was our wrong guess
                   isSelected &&
                     !isCorrect &&
@@ -132,6 +138,7 @@ export default function Arena() {
                     ]
                   }`}
                   color={getThemeColor("--foreground", colorScheme)}
+                  paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
                 />
               </Pressable>
             );
@@ -147,6 +154,7 @@ export default function Arena() {
               text={currentQuestion.explanation}
               className="text-accent-foreground/90 text-sm"
               fontSize={14}
+              paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
             />
           </View>
         )}

@@ -3,7 +3,12 @@ import { useDrizzle } from "@/hooks/useDrizzle";
 import { getHashedPiece } from "@/lib/utils";
 import { inArray } from "drizzle-orm";
 import React, { useEffect, useMemo, useState } from "react";
-import { Text, type TextStyle } from "react-native";
+import {
+  ScrollView,
+  Text,
+  useWindowDimensions,
+  type TextStyle,
+} from "react-native";
 import { SvgXml } from "react-native-svg";
 
 interface MathSvgData {
@@ -19,6 +24,7 @@ interface MathTextProps {
   fontSize?: number;
   className?: string;
   style?: TextStyle;
+  paddingHorizontal: number;
 }
 
 const EX_RATIO = 0.5;
@@ -29,8 +35,11 @@ const MathText = ({
   style,
   color = "black",
   fontSize = 16,
+  paddingHorizontal,
 }: MathTextProps) => {
   const drizzleDb = useDrizzle();
+  const { width: windowWidth } = useWindowDimensions();
+  const [svgDataMap, setSvgDataMap] = useState<Record<string, MathSvgData>>({});
 
   const mathPieces = useMemo(() => {
     return text.split(/(\$[^$]+\$)/g).map((piece, index) => {
@@ -44,8 +53,6 @@ const MathText = ({
       };
     });
   }, [text]);
-
-  const [svgDataMap, setSvgDataMap] = useState<Record<string, MathSvgData>>({});
 
   useEffect(() => {
     const fetchSvgs = async () => {
@@ -93,44 +100,78 @@ const MathText = ({
 
   const scalePx = fontSize * EX_RATIO;
 
+  // Calculate the width of the widest SVG
+  const maxContentWidth = useMemo(() => {
+    const availableWidth = windowWidth - paddingHorizontal;
+    let widestSvg = 0;
+
+    mathPieces.forEach((piece) => {
+      if (piece.isMath && piece.hash && svgDataMap[piece.hash]) {
+        const w = svgDataMap[piece.hash].w * scalePx;
+        if (w > widestSvg) widestSvg = w;
+      }
+    });
+
+    // The text box should be at least the screen width, or the width of the largest SVG
+    return Math.max(availableWidth, widestSvg);
+  }, [mathPieces, svgDataMap, scalePx, windowWidth, paddingHorizontal]);
+
   return (
-    <Text className={className} style={[style]}>
-      {mathPieces.map((piece) => {
-        if (!piece.isMath) {
-          return piece.content;
-        }
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={true}
+      contentContainerStyle={{ minWidth: "100%", paddingBottom: 2 }}
+    >
+      <Text
+        className={className}
+        style={[
+          style,
+          {
+            width: maxContentWidth, // Forces the wrap boundary to the widest element
+            fontSize: fontSize,
+            color: color,
+          },
+        ]}
+      >
+        {mathPieces.map((piece) => {
+          if (!piece.isMath) {
+            return piece.content;
+          }
 
-        const data = piece.hash ? svgDataMap[piece.hash] : null;
+          const data = piece.hash ? svgDataMap[piece.hash] : null;
 
-        if (!data) {
-          return <Text key={piece.id}>...</Text>;
-        }
+          if (!data) {
+            return (
+              <Text key={piece.id} style={{ color: "gray" }}>
+                ...
+              </Text>
+            );
+          }
 
-        const widthPx = data.w * scalePx;
-        const heightPx = data.h * scalePx;
-        const translateY = -1 * (data.v * scalePx);
+          const widthPx = data.w * scalePx;
+          const heightPx = data.h * scalePx;
+          const translateY = -1 * (data.v * scalePx);
+          const verticalMargin = Math.abs(translateY);
 
-        // Use balanced margins on both sides to keep the SVG visually centered
-        // within its line while still preventing overlap with adjacent lines.
-        // This ensures fractions and other tall math don't appear offset.
-        const verticalMargin = Math.abs(translateY);
-
-        return (
-          <SvgXml
-            key={piece.id}
-            xml={data.xml}
-            width={widthPx}
-            height={heightPx}
-            color={color}
-            style={{
-              transform: [{ translateY }],
-              marginTop: verticalMargin,
-              marginBottom: verticalMargin,
-            }}
-          />
-        );
-      })}
-    </Text>
+          return (
+            <SvgXml
+              key={piece.id}
+              xml={data.xml}
+              width={widthPx}
+              height={heightPx}
+              color={color}
+              style={{
+                // Transform handles the baseline alignment
+                transform: [{ translateY }],
+                // Margins prevent the SVG from clipping into lines above/below (I think they do nothing)
+                marginTop: verticalMargin,
+                marginBottom: verticalMargin,
+              }}
+            />
+          );
+        })}
+      </Text>
+    </ScrollView>
   );
 };
 

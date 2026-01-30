@@ -11,11 +11,14 @@ export default function Index() {
         <Text className="font-semibold text-lg">Random Questions</Text>
       </Link>
       <View className="mt-4 flex flex-row gap-4">
-        <Pressable className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary">
+        <Link
+          href="/test"
+          className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary"
+        >
           <Text className="text-foreground font-semibold text-lg">
             Mock Exam
           </Text>
-        </Pressable>
+        </Link>
         <Pressable className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary">
           <Text className="text-foreground font-semibold text-lg">
             Custom Test

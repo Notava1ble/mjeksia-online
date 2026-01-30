@@ -33,7 +33,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (Platform.OS === "android") {
       SystemUI.setBackgroundColorAsync(
-        getThemeColor("--background", colorScheme)
+        getThemeColor("--background", colorScheme),
       );
     }
   }, [colorScheme]);
@@ -104,6 +104,14 @@ function Content({
         name="arena"
         options={{
           title: "Arena",
+          animation: "fade",
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
+        name="test"
+        options={{
+          title: "Test",
           animation: "fade",
           headerShown: true,
         }}

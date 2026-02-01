@@ -1,9 +1,14 @@
 import DynamicImage from "@/components/DynamicImage";
 import MathText from "@/components/MathText";
+import { ConfirmModal } from "@/components/modals/ConfirmModal";
+import { ImageModal } from "@/components/modals/ImageModal";
+import { OverviewModal } from "@/components/modals/OverviewModal";
+import { TimerHeader } from "@/components/TimerHeader";
 import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
 import { loadNQuestions } from "@/db/questions";
 import { questions } from "@/db/schema";
+import { useCountdownTimer } from "@/hooks/useCountdownTimer";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -14,32 +19,31 @@ import { useColorScheme } from "nativewind";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Modal,
   Pressable,
   ScrollView,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
+const TOTAL_TIME_SECONDS = 50 * 60;
 
 const Test = () => {
-  const NUMBER_OF_QUESTIONS =
-    Storage.getItemSync("test_question_amount") === "10" ? 10 : 40;
+  // Read config once on mount using lazy initializer
+  const [numberOfQuestions] = useState(() =>
+    Storage.getItemSync("test_question_amount") === "10" ? 10 : 40,
+  );
 
   const drizzleDb = useDrizzle();
   const { colorScheme } = useColorScheme();
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const [error, setError] = useState(false);
-
   const [allQuestions, setAllQuestions] = useState<
     InferSelectModel<typeof questions>[] | undefined
   >(undefined);
   const [guesses, setGuesses] = useState<
     Array<"A" | "B" | "C" | "D" | undefined>
-  >(new Array(NUMBER_OF_QUESTIONS).fill(undefined));
+  >(() => new Array(numberOfQuestions).fill(undefined));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
@@ -47,10 +51,27 @@ const Test = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isOverviewModalOpen, setIsOverviewModalOpen] = useState(false);
 
+  // Handle time up
+  const handleTimeUp = useCallback(() => {
+    setIsFinished(true);
+    setIsOverviewModalOpen(true);
+  }, []);
+
+  // Use the custom timer hook
+  const {
+    remainingSeconds,
+    restart: restartTimer,
+    stop: stopTimer,
+  } = useCountdownTimer({
+    totalSeconds: TOTAL_TIME_SECONDS,
+    hapticCountdownSeconds: 5,
+    onTimeUp: handleTimeUp,
+  });
+
   const loadNewQuestion = useCallback(async () => {
     setError(false);
     try {
-      const result = await loadNQuestions(drizzleDb, NUMBER_OF_QUESTIONS);
+      const result = await loadNQuestions(drizzleDb, numberOfQuestions);
       if (result.length > 0) {
         setAllQuestions(result);
       }
@@ -58,7 +79,7 @@ const Test = () => {
       console.error("Error fetching question:", error);
       setError(true);
     }
-  }, [drizzleDb]);
+  }, [drizzleDb, numberOfQuestions]);
 
   useEffect(() => {
     loadNewQuestion();
@@ -86,18 +107,48 @@ const Test = () => {
   }, [currentIndex]);
 
   const onNext = useCallback(() => {
-    if (currentIndex !== NUMBER_OF_QUESTIONS - 1) {
+    if (currentIndex !== numberOfQuestions - 1) {
       setCurrentIndex(currentIndex + 1);
       return;
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsConfirmModalOpen(true);
-  }, [currentIndex]);
+  }, [currentIndex, numberOfQuestions]);
+
+  const restartTest = useCallback(() => {
+    setIsOverviewModalOpen(false);
+    setIsFinished(false);
+    setCurrentIndex(0);
+    setGuesses(new Array(numberOfQuestions).fill(undefined));
+    setAllQuestions(undefined);
+    setError(false);
+    restartTimer();
+    loadNewQuestion();
+  }, [loadNewQuestion, numberOfQuestions, restartTimer]);
+
+  const handleConfirmFinish = useCallback(() => {
+    stopTimer();
+    setIsFinished(true);
+    setIsConfirmModalOpen(false);
+    setIsOverviewModalOpen(true);
+  }, [stopTimer]);
+
+  const handleViewResults = useCallback(() => {
+    setIsOverviewModalOpen(false);
+    setCurrentIndex(0);
+  }, []);
+
+  // Calculate stats
+  const correctCount = allQuestions
+    ? guesses.filter((g, i) => g === allQuestions[i]?.answer).length
+    : 0;
+  const unansweredCount = guesses.filter((g) => g === undefined).length;
 
   if (!allQuestions) {
     return (
       <View className="flex-1 bg-background justify-center items-center">
+        <TimerHeader remainingSeconds={remainingSeconds} title="Test" />
         {error ? (
           <>
             <Text className="text-foreground text-lg mb-2">
@@ -127,151 +178,32 @@ const Test = () => {
 
   const currentQuestion = allQuestions[currentIndex];
   const currentGuess = guesses[currentIndex];
+  const isLastQuestion = currentIndex === allQuestions.length - 1;
 
   return (
     <View className="flex-1 bg-background justify-between">
-      {/* Overview Popup */}
-      <Modal
+      <TimerHeader title={"Test"} remainingSeconds={remainingSeconds} />
+
+      <OverviewModal
         visible={isOverviewModalOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsOverviewModalOpen(false)}
-      >
-        <View className="flex-1 bg-card/50 justify-center items-center p-4">
-          <View className="w-[90%] bg-background p-6 rounded-md">
-            <Text className="text-2xl text-foreground font-bold mb-6">
-              Rezultati i Testit
-            </Text>
+        correctCount={correctCount}
+        totalCount={numberOfQuestions}
+        onNewTest={restartTest}
+        onViewResults={handleViewResults}
+      />
 
-            <View className="bg-card p-4 rounded-lg mb-4">
-              <View className="flex-row justify-between mb-3">
-                <Text className="text-foreground">Përgjigje të sakta:</Text>
-                <Text className="text-foreground font-bold">
-                  {
-                    guesses.filter((g, i) => g === allQuestions[i]?.answer)
-                      .length
-                  }{" "}
-                  / {NUMBER_OF_QUESTIONS}
-                </Text>
-              </View>
-              <View className="flex-row justify-between">
-                <Text className="text-foreground">Përqindja:</Text>
-                <Text className="text-foreground font-bold">
-                  {Math.round(
-                    (guesses.filter((g, i) => g === allQuestions[i]?.answer)
-                      .length /
-                      NUMBER_OF_QUESTIONS) *
-                      100,
-                  )}
-                  %
-                </Text>
-              </View>
-            </View>
-
-            <Pressable
-              className="bg-primary p-3 rounded-md active:opacity-80"
-              onPress={() => {
-                setIsOverviewModalOpen(false);
-                setIsFinished(false);
-                setCurrentIndex(0);
-                setGuesses(new Array(NUMBER_OF_QUESTIONS).fill(undefined));
-                setAllQuestions(undefined);
-                setError(false);
-                loadNewQuestion();
-              }}
-            >
-              <Text className="text-primary-foreground text-center font-semibold">
-                Testi i Ri
-              </Text>
-            </Pressable>
-            <Pressable
-              className="bg-secondary p-3 rounded-md active:opacity-80 mt-2"
-              onPress={() => {
-                setIsOverviewModalOpen(false);
-                setCurrentIndex(0);
-              }}
-            >
-              <Text className="text-secondary-foreground text-center">
-                Shiko rezultatet
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Confirm Popup */}
-      <Modal
+      <ConfirmModal
         visible={isConfirmModalOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsConfirmModalOpen(false)}
-      >
-        <View className="flex-1 bg-card/50 justify-center items-center p-4">
-          <View className="w-[85%] bg-background p-4 rounded-md">
-            <Text className="text-lg text-foreground">Perfundo testin?</Text>
-            {guesses.includes(undefined) && (
-              <Text className="text-foreground mt-2">
-                {guesses.filter((g) => g === undefined).length} pyetje jane pa
-                pergjigje
-              </Text>
-            )}
-            <View className="flex-row gap-2 mt-4">
-              <Pressable
-                className="flex-1 bg-secondary p-3 rounded-md active:opacity-80"
-                onPress={() => setIsConfirmModalOpen(false)}
-              >
-                <Text className="text-foreground text-center font-semibold">
-                  Anulo
-                </Text>
-              </Pressable>
-              <Pressable
-                className="flex-1 bg-primary p-3 rounded-md active:opacity-80"
-                onPress={() => {
-                  setIsFinished(true);
-                  setIsConfirmModalOpen(false);
-                  setIsOverviewModalOpen(true);
-                }}
-              >
-                <Text className="text-primary-foreground text-center font-semibold">
-                  Konfirmo
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      {/* --- IMAGE POPUP --- */}
-      <Modal
-        visible={isImageModalOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsImageModalOpen(false)}
-      >
-        <Pressable
-          className="flex-1 bg-card/80 justify-center items-center p-4"
-          onPress={() => setIsImageModalOpen(false)}
-        >
-          {/* Close Button */}
-          <View className="absolute top-12 right-6 z-10">
-            <Ionicons
-              name="close-circle"
-              size={40}
-              color={getThemeColor("--foreground", colorScheme)}
-            />
-          </View>
+        unansweredCount={unansweredCount}
+        onCancel={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmFinish}
+      />
 
-          {/* Large Image */}
-          {currentQuestion.image && (
-            <View style={{ width: SCREEN_WIDTH - 40 }}>
-              <DynamicImage
-                source={
-                  imageMap[currentQuestion.image as keyof typeof imageMap]
-                }
-              />
-            </View>
-          )}
-        </Pressable>
-      </Modal>
+      <ImageModal
+        visible={isImageModalOpen}
+        imageKey={currentQuestion.image}
+        onClose={() => setIsImageModalOpen(false)}
+      />
 
       <ScrollView
         contentContainerStyle={{
@@ -280,7 +212,8 @@ const Test = () => {
         }}
       >
         <Text className="text-muted-foreground mb-2">
-          Pyetja {currentIndex + 1} - {currentQuestion.exam_title}
+          Pyetja {currentIndex + 1} / {numberOfQuestions} -{" "}
+          {currentQuestion.exam_title}
         </Text>
         <MathText
           color={getThemeColor("--foreground", colorScheme)}
@@ -302,7 +235,6 @@ const Test = () => {
                   imageMap[currentQuestion.image as keyof typeof imageMap]
                 }
               />
-              {/* Intentional black/white usage */}
               <View className="absolute bottom-2 right-2 bg-black/50 p-1 rounded">
                 <Ionicons name="expand" size={16} color="white" />
               </View>
@@ -327,7 +259,6 @@ const Test = () => {
                     !isCorrect &&
                     isFinished &&
                     "bg-destructive border-destructive",
-                  // Green background if this is the correct answer AND we have guessed
                   currentGuess &&
                     isCorrect &&
                     isFinished &&
@@ -347,7 +278,6 @@ const Test = () => {
                     ]
                   }`}
                   color={getThemeColor("--foreground", colorScheme)}
-                  // Account for ScrollView padding + button padding + border
                   paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
                 />
               </Pressable>
@@ -364,17 +294,17 @@ const Test = () => {
               text={currentQuestion.explanation}
               className="text-accent-foreground/90 text-sm"
               fontSize={14}
-              // Account for ScrollView padding + button padding + border
               paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
             />
           </View>
         )}
       </ScrollView>
+
       <View className="p-6 border-t border-border bg-background flex-row gap-2">
         <Pressable
           className={cn(
             "bg-secondary p-4 flex-1 rounded-lg active:bg-secondary/90 flex-row gap-2 items-center",
-            currentIndex === 0 && "bg-muted ",
+            currentIndex === 0 && "bg-muted",
           )}
           onPress={onPrev}
           disabled={currentIndex === 0}
@@ -399,36 +329,30 @@ const Test = () => {
         <Pressable
           className={cn(
             "bg-secondary p-4 flex-1 rounded-lg active:bg-secondary/90 flex-row gap-2 items-center justify-end",
-            isFinished && currentIndex === allQuestions.length - 1
+            isFinished && isLastQuestion
               ? "bg-muted active:bg-muted/90"
-              : currentIndex === allQuestions.length - 1 &&
-                  "bg-primary active:bg-primary/90",
+              : isLastQuestion && "bg-primary active:bg-primary/90",
           )}
           onPress={onNext}
-          disabled={isFinished && currentIndex === allQuestions.length - 1}
+          disabled={isFinished && isLastQuestion}
         >
           <Text
             className={cn(
               "font-semibold text-lg text-foreground align-center",
-              isFinished && currentIndex === allQuestions.length - 1
+              isFinished && isLastQuestion
                 ? "text-muted-foreground"
-                : currentIndex === allQuestions.length - 1 &&
-                    "text-primary-foreground",
+                : isLastQuestion && "text-primary-foreground",
             )}
           >
-            {isFinished && currentIndex === allQuestions.length - 1
-              ? "Perpara"
-              : currentIndex === allQuestions.length - 1
-                ? "Perfundo"
-                : "Perpara"}
+            {isLastQuestion && !isFinished ? "Perfundo" : "Perpara"}
           </Text>
           <Ionicons
             name="arrow-forward"
             size={22}
             color={getThemeColor(
-              isFinished && currentIndex === allQuestions.length - 1
+              isFinished && isLastQuestion
                 ? "--muted-foreground"
-                : currentIndex === allQuestions.length - 1
+                : isLastQuestion
                   ? "--primary-foreground"
                   : "--foreground",
               colorScheme,

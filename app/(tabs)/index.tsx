@@ -8,7 +8,7 @@ export default function Index() {
         href="/arena"
         className="bg-primary p-4 w-full rounded-lg active:bg-primary/90"
       >
-        <Text className="font-semibold text-lg">Random Questions</Text>
+        <Text className="font-semibold text-lg">Pyetje te Cfaredoshme</Text>
       </Link>
       <View className="mt-4 flex flex-row gap-4">
         <Link
@@ -16,13 +16,11 @@ export default function Index() {
           className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary"
         >
           <Text className="text-foreground font-semibold text-lg">
-            Mock Exam
+            Model Testi
           </Text>
         </Link>
         <Pressable className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary">
-          <Text className="text-foreground font-semibold text-lg">
-            Custom Test
-          </Text>
+          <Text className="text-foreground font-semibold text-lg">W.I.P.</Text>
         </Pressable>
       </View>
     </View>

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { InferSelectModel } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
+import Storage from "expo-sqlite/kv-store";
 import { useColorScheme } from "nativewind";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -22,9 +23,11 @@ import {
 } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
-const NUMBER_OF_QUESTIONS = 10;
 
 const Test = () => {
+  const NUMBER_OF_QUESTIONS =
+    Storage.getItemSync("test_question_amount") === "10" ? 10 : 40;
+
   const drizzleDb = useDrizzle();
   const { colorScheme } = useColorScheme();
   const { width: SCREEN_WIDTH } = useWindowDimensions();

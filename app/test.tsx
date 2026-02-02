@@ -34,7 +34,7 @@ const Test = () => {
     Storage.getItemSync("test_question_amount") === "10" ? 10 : 40,
   );
 
-  const drizzleDb = useDrizzle();
+  const { drizzleDb } = useDrizzle();
   const { colorScheme } = useColorScheme();
 
   const [error, setError] = useState(false);

@@ -1,11 +1,6 @@
 import * as schema from "@/db/schema";
 import { sql } from "drizzle-orm";
-import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import { SQLiteDatabase } from "expo-sqlite";
-
-type DbType = ExpoSQLiteDatabase<typeof schema> & {
-  $client: SQLiteDatabase;
-};
+import { DbType } from "./types";
 
 export async function getRandomQuestion(db: DbType) {
   const result = await db

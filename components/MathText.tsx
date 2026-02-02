@@ -37,7 +37,7 @@ const MathText = ({
   fontSize = 16,
   paddingHorizontal,
 }: MathTextProps) => {
-  const drizzleDb = useDrizzle();
+  const { drizzleDb } = useDrizzle();
   const { width: windowWidth } = useWindowDimensions();
   const [svgDataMap, setSvgDataMap] = useState<Record<string, MathSvgData>>({});
 

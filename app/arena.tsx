@@ -24,7 +24,7 @@ const HORIZONTAL_PADDING = 16;
 
 export default function Arena() {
   const { colorScheme } = useColorScheme();
-  const drizzleDb = useDrizzle();
+  const { drizzleDb } = useDrizzle();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);

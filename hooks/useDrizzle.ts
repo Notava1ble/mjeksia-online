@@ -1,8 +1,10 @@
 // hooks/useDrizzle.ts
 import * as schema from "@/db/schema";
 import { drizzle } from "drizzle-orm/expo-sqlite";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
+import migrations from "../drizzle/migrations";
 
 export function useDrizzle() {
   const db = useSQLiteContext();
@@ -11,5 +13,7 @@ export function useDrizzle() {
     return drizzle(db, { schema });
   }, [db]);
 
-  return drizzleDb;
+  const { success, error } = useMigrations(drizzleDb, migrations);
+
+  return { drizzleDb, migrationSuccess: success, migrationError: error };
 }

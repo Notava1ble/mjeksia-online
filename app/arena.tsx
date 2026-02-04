@@ -2,12 +2,12 @@ import DynamicImage from "@/components/DynamicImage";
 import MathText from "@/components/MathText";
 import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
-import * as schema from "@/db/schema";
+import { getRandomQuestion } from "@/db/questions";
 import { questions } from "@/db/schema";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { sql, type InferSelectModel } from "drizzle-orm";
+import { type InferSelectModel } from "drizzle-orm";
 import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import {
@@ -24,7 +24,7 @@ const HORIZONTAL_PADDING = 16;
 
 export default function Arena() {
   const { colorScheme } = useColorScheme();
-  const drizzleDb = useDrizzle();
+  const { drizzleDb } = useDrizzle();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
@@ -34,17 +34,12 @@ export default function Arena() {
   >(undefined);
 
   const [guess, setGuess] = useState<"A" | "B" | "C" | "D" | undefined>(
-    undefined
+    undefined,
   );
 
   const loadNewQuestion = async () => {
     try {
-      const result = await drizzleDb
-        .select()
-        .from(schema.questions)
-        .orderBy(sql`RANDOM()`)
-        .limit(1);
-
+      const result = await getRandomQuestion(drizzleDb);
       if (result.length > 0) {
         setCurrentQuestion(result[0]);
       }
@@ -167,7 +162,7 @@ export default function Arena() {
                     !isCorrect &&
                     "bg-destructive border-destructive",
                   // Green background if this is the correct answer AND we have guessed
-                  guess && isCorrect && "bg-green-600 border-green-700"
+                  guess && isCorrect && "bg-green-600 border-green-700",
                 )}
                 onPress={() => onGuess(letter)}
               >
@@ -175,7 +170,7 @@ export default function Arena() {
                   className={cn(
                     "text-foreground align-middle",
                     guess && isCorrect && "text-foreground font-bold",
-                    isSelected && !isCorrect && "text-foreground"
+                    isSelected && !isCorrect && "text-foreground",
                   )}
                   text={`${
                     currentQuestion[

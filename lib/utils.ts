@@ -15,3 +15,18 @@ export function getHashedPiece(piece: string): string {
   const normalized = piece.trim().replace(/\s+/g, " ");
   return sha256(normalized).toString(Hex).substring(0, 12);
 }
+
+export const formatTime = (seconds: number) => {
+  const mm = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const ss = (seconds % 60).toString().padStart(2, "0");
+  return `${mm}:${ss}`;
+};
+
+export function formatDate(date: Date): string {
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}

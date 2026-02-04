@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "622753d3-2071-4681-a34b-8bb5dea3179d",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "52e4a7cd-f29c-46f6-bfd3-682220b20d8a",
+  "prevId": "622753d3-2071-4681-a34b-8bb5dea3179d",
   "tables": {
     "math_svgs": {
       "name": "math_svgs",
@@ -147,7 +147,10 @@
       "indexes": {
         "unique_exam_question": {
           "name": "unique_exam_question",
-          "columns": ["exam_title", "subId"],
+          "columns": [
+            "exam_title",
+            "subId"
+          ],
           "isUnique": true
         }
       },
@@ -247,7 +250,7 @@
           "name": "is_correct",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
@@ -257,8 +260,12 @@
           "name": "user_answers_session_id_test_sessions_id_fk",
           "tableFrom": "user_answers",
           "tableTo": "test_sessions",
-          "columnsFrom": ["session_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -266,8 +273,12 @@
           "name": "user_answers_question_id_questions_id_fk",
           "tableFrom": "user_answers",
           "tableTo": "questions",
-          "columnsFrom": ["question_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

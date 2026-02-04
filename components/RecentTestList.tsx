@@ -49,7 +49,7 @@ const RecentTestList = () => {
       <View className="w-full gap-4 mt-4">
         {recentTests.map((test) => (
           <View
-            className="w-full bg-secondary rounded-lg border border-border p-4 flex-row justify-between items-center"
+            className="w-full bg-card rounded-lg border border-border p-4 flex-row justify-between items-center"
             key={test.id}
           >
             <View>

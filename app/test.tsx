@@ -130,7 +130,9 @@ const Test = () => {
       if (!isFinished) {
         setGuesses((prev) => {
           if (prev[index] === letter) return prev;
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          if (remainingSeconds >= 6) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
           const newGuesses = [...prev];
           newGuesses[index] = letter;
           return newGuesses;
@@ -151,8 +153,9 @@ const Test = () => {
       setCurrentIndex(currentIndex + 1);
       return;
     }
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (remainingSeconds >= 6) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
     setIsConfirmModalOpen(true);
   }, [currentIndex, numberOfQuestions]);
 

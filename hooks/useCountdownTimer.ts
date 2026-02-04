@@ -41,7 +41,6 @@ export const useCountdownTimer = ({
           intervalRef.current = null;
           setIsRunning(false);
 
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
           onTimeUpRef.current?.(remainingSeconds);
 
           return 0;

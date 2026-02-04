@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface UseCountdownTimerOptions {
   totalSeconds: number;
   hapticCountdownSeconds?: number;
-  onTimeUp?: () => void;
+  onTimeUp?: (remainingSeconds: number) => void;
 }
 
 interface UseCountdownTimerReturn {
@@ -42,7 +42,7 @@ export const useCountdownTimer = ({
           setIsRunning(false);
 
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          onTimeUpRef.current?.();
+          onTimeUpRef.current?.(remainingSeconds);
 
           return 0;
         }

@@ -32,9 +32,11 @@ export const testSessions = sqliteTable("test_sessions", {
 
   time_left: int("time_left"),
 
-  score: int("score").default(0),
-  total_questions: int("total_questions").default(50),
-  is_completed: int("is_completed", { mode: "boolean" }).default(false),
+  score: int("score").notNull().default(0),
+  total_questions: int("total_questions").notNull(),
+  is_completed: int("is_completed", { mode: "boolean" })
+    .notNull()
+    .default(false),
 });
 
 export const userAnswers = sqliteTable("user_answers", {
@@ -46,7 +48,9 @@ export const userAnswers = sqliteTable("user_answers", {
     .notNull()
     .references(() => questions.id),
 
-  selected_option: text("selected_option").$type<"A" | "B" | "C" | "D">(),
+  selected_option: text("selected_option").$type<
+    "A" | "B" | "C" | "D" | null
+  >(),
   is_correct: int("is_correct", { mode: "boolean" }).notNull(),
 });
 

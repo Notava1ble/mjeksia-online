@@ -8,6 +8,7 @@ import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
 import { loadNQuestions } from "@/db/questions";
 import { questions } from "@/db/schema";
+import { insertTestSession } from "@/db/testSessions";
 import { useCountdownTimer } from "@/hooks/useCountdownTimer";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
@@ -51,11 +52,50 @@ const Test = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isOverviewModalOpen, setIsOverviewModalOpen] = useState(false);
 
+  const writeToDatabase = useCallback(
+    async (completed: boolean, timeLeft: number) => {
+      if (!allQuestions) {
+        return;
+      }
+
+      const score = guesses.filter(
+        (g, i) => g === allQuestions[i].answer,
+      ).length;
+
+      const questionsObject = guesses.map((guess, i) => {
+        const question = allQuestions[i];
+
+        return {
+          questionId: question.id,
+          selected_option: guess ? guess : null,
+          is_correct: guess === question.answer,
+        };
+      });
+
+      await insertTestSession(
+        drizzleDb,
+        {
+          score: score,
+          time_left: timeLeft,
+          total_questions: allQuestions.length,
+          is_completed: completed,
+        },
+        questionsObject,
+      );
+    },
+    [allQuestions, guesses, drizzleDb],
+  );
+
   // Handle time up
-  const handleTimeUp = useCallback(() => {
-    setIsFinished(true);
-    setIsOverviewModalOpen(true);
-  }, []);
+  const handleTimeUp = useCallback(
+    (timeLeft: number) => {
+      setIsFinished(true);
+      setIsOverviewModalOpen(true);
+
+      writeToDatabase(false, timeLeft);
+    },
+    [writeToDatabase],
+  );
 
   // Use the custom timer hook
   const {
@@ -127,12 +167,14 @@ const Test = () => {
     loadNewQuestion();
   }, [loadNewQuestion, numberOfQuestions, restartTimer]);
 
-  const handleConfirmFinish = useCallback(() => {
+  const handleConfirmFinish = useCallback(async () => {
+    writeToDatabase(true, remainingSeconds);
+
     stopTimer();
     setIsFinished(true);
     setIsConfirmModalOpen(false);
     setIsOverviewModalOpen(true);
-  }, [stopTimer]);
+  }, [stopTimer, writeToDatabase, remainingSeconds]);
 
   const handleViewResults = useCallback(() => {
     setIsOverviewModalOpen(false);

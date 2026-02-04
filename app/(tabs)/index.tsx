@@ -4,7 +4,7 @@ import { useDrizzle } from "@/hooks/useDrizzle";
 import { InferSelectModel } from "drizzle-orm";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 export default function Index() {
   const { drizzleDb, migrationError, migrationSuccess } = useDrizzle();
@@ -64,6 +64,36 @@ export default function Index() {
               W.I.P.
             </Text>
           </Pressable>
+        </View>
+      </View>
+      <View className="mt-10">
+        <Text className="text-foreground text-xl font-semibold">
+          Historia e Testeve
+        </Text>
+        <View className="w-full items-center mt-4">
+          {recentTests ? (
+            recentTests.length !== 0 ? (
+              <View className="w-full bg-secondary rounded-lg border border-border p-4 flex-row justify-between items-center">
+                <View>
+                  <Text className="text-lg font-medium text-secondary-foreground">
+                    Model Testi #1
+                  </Text>
+                  <Text className="text-sm text-muted-foreground">
+                    Data: 11/22/2026
+                  </Text>
+                </View>
+                <View className="py-2 px-3 bg-green-400/40 rounded-lg">
+                  <Text className="text-green-500 font-bold">31/40</Text>
+                </View>
+              </View>
+            ) : (
+              <Text className="text-muted-foreground">
+                Nuk keni plotesuar asnje test
+              </Text>
+            )
+          ) : (
+            <ActivityIndicator />
+          )}
         </View>
       </View>
     </View>

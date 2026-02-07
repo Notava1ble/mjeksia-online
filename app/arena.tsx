@@ -1,5 +1,7 @@
 import DynamicImage from "@/components/DynamicImage";
+import MarkdownTable from "@/components/MarkdownTable";
 import MathText from "@/components/MathText";
+import { ImageModal } from "@/components/modals/ImageModal";
 import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
 import { getRandomQuestion } from "@/db/questions";
@@ -12,11 +14,9 @@ import { useColorScheme } from "nativewind";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Modal,
   Pressable,
   ScrollView,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -25,7 +25,6 @@ const HORIZONTAL_PADDING = 16;
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const { drizzleDb } = useDrizzle();
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
@@ -79,37 +78,11 @@ export default function Arena() {
   return (
     <View className="flex-1 bg-background justify-between">
       {/* --- IMAGE POPUP --- */}
-      <Modal
+      <ImageModal
         visible={isImageModalOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsImageModalOpen(false)}
-      >
-        <Pressable
-          className="flex-1 bg-card/80 justify-center items-center p-4"
-          onPress={() => setIsImageModalOpen(false)}
-        >
-          {/* Close Button */}
-          <View className="absolute top-12 right-6 z-10">
-            <Ionicons
-              name="close-circle"
-              size={40}
-              color={getThemeColor("--foreground", colorScheme)}
-            />
-          </View>
-
-          {/* Large Image */}
-          {currentQuestion.image && (
-            <View style={{ width: SCREEN_WIDTH - 40 }}>
-              <DynamicImage
-                source={
-                  imageMap[currentQuestion.image as keyof typeof imageMap]
-                }
-              />
-            </View>
-          )}
-        </Pressable>
-      </Modal>
+        imageKey={currentQuestion.image}
+        onClose={() => setIsImageModalOpen(false)}
+      />
 
       <ScrollView
         contentContainerStyle={{
@@ -126,11 +99,16 @@ export default function Arena() {
           className="text-foreground text-lg leading-6 font-medium"
           paddingHorizontal={HORIZONTAL_PADDING * 2}
         />
-        <Pressable
-          onPress={() => setIsImageModalOpen(true)}
-          className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
-        >
-          {currentQuestion.image ? (
+        <MarkdownTable
+          content={currentQuestion.table_content}
+          horizontalPadding={HORIZONTAL_PADDING * 2}
+          className="mt-4"
+        />
+        {currentQuestion.image && (
+          <Pressable
+            onPress={() => setIsImageModalOpen(true)}
+            className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
+          >
             <View className="px-4 py-2 w-full h-full items-center">
               <DynamicImage
                 source={
@@ -142,10 +120,8 @@ export default function Arena() {
                 <Ionicons name="expand" size={16} color="white" />
               </View>
             </View>
-          ) : (
-            <Text className="text-muted-foreground italic">Pa figurë</Text>
-          )}
-        </Pressable>
+          </Pressable>
+        )}
         <View className="gap-3 mt-6">
           {(["A", "B", "C", "D"] as const).map((letter) => {
             const isCorrect = currentQuestion.answer === letter;

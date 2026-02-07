@@ -31,6 +31,18 @@ export const settingsSchema = {
     section: "Debug",
     scope: "dev",
   }),
+  test_time: defineSetting({
+    label: "Time per test",
+    options: {
+      "50": "50 minuta",
+      "10": "10 min",
+      "1": "1 min",
+      "0.5": "30 sekonda",
+    },
+    default: "50",
+    section: "Debug",
+    scope: "dev",
+  }),
   // Adding a new setting later is just this:
   // review_mode: defineSetting({
   //   label: "Review mode",

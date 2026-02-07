@@ -28,13 +28,13 @@ import {
 } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
-const TOTAL_TIME_SECONDS = 50 * 60;
 
 const Test = () => {
   // Read config once on mount using lazy initializer
   const [numberOfQuestions] = useState(() =>
     parseInt(getSetting("test_question_amount"), 10),
   );
+  const [totalTime] = useState(() => parseFloat(getSetting("test_time")) * 60);
 
   const { drizzleDb } = useDrizzle();
   const { colorScheme } = useColorScheme();
@@ -104,7 +104,7 @@ const Test = () => {
     restart: restartTimer,
     stop: stopTimer,
   } = useCountdownTimer({
-    totalSeconds: TOTAL_TIME_SECONDS,
+    totalSeconds: totalTime,
     hapticCountdownSeconds: 5,
     onTimeUp: handleTimeUp,
   });

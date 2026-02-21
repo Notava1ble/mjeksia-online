@@ -17,7 +17,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8 # or "latest"
+          version: "latest" # or "latest"
 
       # Setup Node and use the built-in pnpm cache
       - name: Setup Node

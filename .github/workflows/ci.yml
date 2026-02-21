@@ -13,38 +13,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8 # or "latest"
+
+      # Setup Node and use the built-in pnpm cache
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Enable Corepack and prepare pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@8.8.0 --activate
-
-      - name: Setup pnpm (optional)
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Verify pnpm
-        run: pnpm --version
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
+      # Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Type check (tsc)
-        run: pnpm exec tsc --noEmit
+      # Run Type Check
+      - name: Type check
+        run: pnpm typecheck
 
-      - name: Lint (expo / eslint)
-        run: pnpm run lint --silent
+      # Run Lint
+      - name: Lint
+        run: pnpm run lint

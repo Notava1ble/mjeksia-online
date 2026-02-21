@@ -14,6 +14,12 @@
     "typecheck": "tsc --noEmit",
     "context": "repomix app components constants lib db --style markdown -o context.md"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "unrs-resolver"
+    ]
+  },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.4.0",

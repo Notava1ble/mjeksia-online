@@ -1,4 +1,6 @@
-export const CATEGORIES = {
+export const CATEGORIES: {
+  [subject: string]: string[];
+} = {
   Biologji: ["Ciklet", "Diversiteti", "Ndërveprimet", "Sistemet"],
   Fizikë: [
     "Lëkundjet dhe valët, Optika valore",

@@ -117,7 +117,7 @@ function Content({
         options={{
           title: "Fondi Pyetjeve",
           animation: "fade",
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

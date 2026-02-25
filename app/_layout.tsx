@@ -2,13 +2,13 @@ import { useSettingsSideEffects } from "@/services/settings/settings";
 import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
-import { useColorScheme } from "nativewind";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -16,7 +16,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme } = useColorScheme();
+  const { theme, isDark } = useAppTheme();
   const [isReady, setIsReady] = useState(false);
   const hasHiddenSplash = useRef(false);
 
@@ -29,11 +29,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === "android") {
-      SystemUI.setBackgroundColorAsync(
-        getThemeColor("--background", colorScheme),
-      );
+      SystemUI.setBackgroundColorAsync(getThemeColor("--background", theme));
     }
-  }, [colorScheme]);
+  }, [theme]);
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady && !hasHiddenSplash.current) {
@@ -48,15 +46,15 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <View
-        key={colorScheme}
+        key={theme}
         onLayout={onLayoutRootView}
-        style={[themes[colorScheme ?? "light"], { flex: 1 }]}
+        style={[themes[theme], { flex: 1 }]}
         className="bg-background"
       >
         <StatusBar
-          style={colorScheme === "light" ? "dark" : "light"}
+          style={isDark ? "light" : "dark"}
           translucent={false}
-          backgroundColor={getThemeColor("--background", colorScheme)}
+          backgroundColor={getThemeColor("--background", theme)}
         />
         <Suspense
           fallback={
@@ -70,7 +68,7 @@ export default function RootLayout() {
             assetSource={{ assetId: require("@/assets/data.db") }}
             useSuspense
           >
-            <Content colorScheme={colorScheme} />
+            <Content theme={theme} />
           </SQLiteProvider>
         </Suspense>
       </View>
@@ -78,11 +76,7 @@ export default function RootLayout() {
   );
 }
 
-function Content({
-  colorScheme,
-}: {
-  colorScheme: "light" | "dark" | undefined;
-}) {
+function Content({ theme }: { theme: "light" | "dark" }) {
   const db = useSQLiteContext();
   useDrizzleStudio(db);
 
@@ -90,10 +84,10 @@ function Content({
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: getThemeColor("--background", colorScheme),
+          backgroundColor: getThemeColor("--background", theme),
         },
         headerShadowVisible: false,
-        headerTintColor: getThemeColor("--foreground", colorScheme),
+        headerTintColor: getThemeColor("--foreground", theme),
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

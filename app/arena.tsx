@@ -6,12 +6,12 @@ import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
 import { getRandomQuestion } from "@/db/questions";
 import { questions } from "@/db/schema";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
 import { useSetting } from "@/services/settings/settings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { type InferSelectModel } from "drizzle-orm";
-import { useColorScheme } from "nativewind";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -24,7 +24,7 @@ import {
 const HORIZONTAL_PADDING = 16;
 
 export default function Arena() {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
   const { drizzleDb } = useDrizzle();
   const [hideExplanation] = useSetting("hide_arena_explanation");
 
@@ -71,7 +71,7 @@ export default function Arena() {
       <View className="flex-1 bg-background justify-center items-center">
         <ActivityIndicator
           size="large"
-          color={getThemeColor("--muted-foreground", colorScheme)}
+          color={getThemeColor("--muted-foreground", theme)}
         />
       </View>
     );
@@ -96,7 +96,7 @@ export default function Arena() {
           Pyetja {currentQuestion.subId} - {currentQuestion.exam_title}
         </Text>
         <MathText
-          color={getThemeColor("--foreground", colorScheme)}
+          color={getThemeColor("--foreground", theme)}
           text={currentQuestion.question_text}
           className="text-foreground text-lg leading-6 font-medium"
           paddingHorizontal={HORIZONTAL_PADDING * 2}
@@ -155,7 +155,7 @@ export default function Arena() {
                       `option_${letter.toLowerCase()}` as keyof typeof currentQuestion
                     ]
                   }`}
-                  color={getThemeColor("--foreground", colorScheme)}
+                  color={getThemeColor("--foreground", theme)}
                   // Account for ScrollView padding + button padding + border
                   paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
                 />
@@ -169,7 +169,7 @@ export default function Arena() {
               Shpjegimi:
             </Text>
             <MathText
-              color={getThemeColor("--accent-foreground", colorScheme, 0.9)}
+              color={getThemeColor("--accent-foreground", theme, 0.9)}
               text={currentQuestion.explanation}
               className="text-accent-foreground/90 text-sm"
               fontSize={14}

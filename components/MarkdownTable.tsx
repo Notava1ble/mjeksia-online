@@ -1,6 +1,6 @@
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { cn } from "@/lib/utils";
-import { useColorScheme } from "nativewind";
 import React, { useMemo } from "react";
 import { ScrollView, Text, useWindowDimensions, View } from "react-native";
 
@@ -92,7 +92,7 @@ export default function MarkdownTable({
   horizontalPadding = 0,
   className,
 }: MarkdownTableProps) {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
   const { width: screenWidth } = useWindowDimensions();
 
   const table = useMemo(
@@ -112,8 +112,8 @@ export default function MarkdownTable({
   const needsScroll = equalWidth < MIN_COL_WIDTH;
   const colWidth = needsScroll ? MIN_COL_WIDTH : equalWidth;
 
-  const foreground = getThemeColor("--foreground", colorScheme);
-  const mutedForeground = getThemeColor("--muted-foreground", colorScheme);
+  const foreground = getThemeColor("--foreground", theme);
+  const mutedForeground = getThemeColor("--muted-foreground", theme);
 
   const renderRow = (cells: string[], isHeader: boolean, rowIndex?: number) => (
     <View

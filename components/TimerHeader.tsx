@@ -1,7 +1,7 @@
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { formatTime } from "@/lib/utils";
 import { Stack } from "expo-router";
-import { useColorScheme } from "nativewind";
 import { Text } from "react-native";
 
 interface TimerHeaderProps {
@@ -15,12 +15,12 @@ export const TimerHeader = ({
   remainingSeconds,
   lowTimeThreshold = 60,
 }: TimerHeaderProps) => {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
   const isLowTime = remainingSeconds <= lowTimeThreshold;
 
   const timerColor = isLowTime
-    ? getThemeColor("--destructive", colorScheme)
-    : getThemeColor("--foreground", colorScheme);
+    ? getThemeColor("--destructive", theme)
+    : getThemeColor("--foreground", theme);
 
   return (
     <Stack.Screen

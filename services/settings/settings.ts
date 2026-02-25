@@ -1,7 +1,5 @@
 import Storage from "expo-sqlite/kv-store";
-import { useColorScheme } from "nativewind";
-import { useCallback, useEffect, useSyncExternalStore } from "react";
-
+import { useCallback, useSyncExternalStore } from "react";
 import type { AnySettingDef } from "./settingTypes";
 import {
   settingsDefs,
@@ -77,17 +75,6 @@ export function useSetting<K extends SettingsKey>(key: K) {
   return [value, setter] as const;
 }
 
-// Global Effect Handler
 export function useSettingsSideEffects() {
-  const { setColorScheme } = useColorScheme();
-
-  const [theme] = useSetting("user_theme");
-
-  useEffect(() => {
-    if (theme === "system") {
-      setColorScheme("system");
-    } else {
-      setColorScheme(theme as "light" | "dark");
-    }
-  }, [theme, setColorScheme]);
+  // Left for future side effects
 }

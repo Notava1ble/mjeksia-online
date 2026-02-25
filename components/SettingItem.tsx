@@ -1,4 +1,5 @@
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { cn } from "@/lib/utils";
 import {
   AnySettingDef,
@@ -6,7 +7,6 @@ import {
   setSetting,
   useSetting,
 } from "@/services/settings/settings";
-import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, Switch, Text, View } from "react-native";
 
@@ -19,9 +19,9 @@ export function SettingItem({
 }) {
   const [value] = useSetting(settingKey);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
 
-  const primaryColor = getThemeColor("--primary", colorScheme);
+  const primaryColor = getThemeColor("--primary", theme);
 
   // Use a runtime-typed setter that bypasses the generic constraint issue.
   // This is safe because the schema + runtime validation in setSetting

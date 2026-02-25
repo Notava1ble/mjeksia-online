@@ -2,8 +2,8 @@
 import DynamicImage from "@/components/DynamicImage";
 import { imageMap } from "@/constants/imageMap";
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useColorScheme } from "nativewind";
 import { Modal, Pressable, View, useWindowDimensions } from "react-native";
 
 interface ImageModalProps {
@@ -13,7 +13,7 @@ interface ImageModalProps {
 }
 
 export const ImageModal = ({ visible, imageKey, onClose }: ImageModalProps) => {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
   const { width: screenWidth } = useWindowDimensions();
 
   return (
@@ -31,7 +31,7 @@ export const ImageModal = ({ visible, imageKey, onClose }: ImageModalProps) => {
           <Ionicons
             name="close-circle"
             size={40}
-            color={getThemeColor("--foreground", colorScheme)}
+            color={getThemeColor("--foreground", theme)}
           />
         </View>
 

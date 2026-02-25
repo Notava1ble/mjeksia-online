@@ -1,22 +1,22 @@
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
-import { useColorScheme } from "nativewind";
 
 export default function TabLayout() {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: getThemeColor("--primary", colorScheme),
+        tabBarActiveTintColor: getThemeColor("--primary", theme),
         headerStyle: {
-          backgroundColor: getThemeColor("--background", colorScheme),
+          backgroundColor: getThemeColor("--background", theme),
         },
         headerShadowVisible: false,
-        headerTintColor: getThemeColor("--foreground", colorScheme),
+        headerTintColor: getThemeColor("--foreground", theme),
         tabBarStyle: {
-          backgroundColor: getThemeColor("--background", colorScheme),
+          backgroundColor: getThemeColor("--background", theme),
         },
       }}
     >

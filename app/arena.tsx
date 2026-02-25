@@ -8,6 +8,7 @@ import { getRandomQuestion } from "@/db/questions";
 import { questions } from "@/db/schema";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
+import { useSetting } from "@/services/settings/settings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { type InferSelectModel } from "drizzle-orm";
 import { useColorScheme } from "nativewind";
@@ -25,6 +26,7 @@ const HORIZONTAL_PADDING = 16;
 export default function Arena() {
   const { colorScheme } = useColorScheme();
   const { drizzleDb } = useDrizzle();
+  const [hideExplanation] = useSetting("hide_arena_explanation");
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
@@ -161,7 +163,7 @@ export default function Arena() {
             );
           })}
         </View>
-        {guess && (
+        {guess && !hideExplanation && (
           <View className="mt-4 p-4 bg-accent rounded-lg border border-accent/30">
             <Text className="text-accent-foreground font-bold mb-1">
               Shpjegimi:

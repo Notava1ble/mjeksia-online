@@ -1,4 +1,4 @@
-import { getSetting } from "@/constants/settings";
+import { useSettingsSideEffects } from "@/services/settings/settings";
 import { getThemeColor, themes } from "../constants/theme";
 import "../global.css";
 
@@ -16,15 +16,16 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, setColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const [isReady, setIsReady] = useState(false);
   const hasHiddenSplash = useRef(false);
 
-  useEffect(() => {
-    setColorScheme(getSetting("user_theme"));
+  // Initialize global settings effects (e.g., Theme propagation)
+  useSettingsSideEffects();
 
+  useEffect(() => {
     setIsReady(true);
-  }, [setColorScheme]);
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === "android") {

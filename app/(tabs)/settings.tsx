@@ -1,47 +1,53 @@
 // settings.tsx
-import { SettingRow } from "@/components/SettingRow";
-import { SettingsKey, settingsSchema } from "@/constants/settings";
+import { getThemeColor } from "@/constants/theme";
+import { settingsSchema } from "@/services/settings/settings";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Settings() {
-  const { setColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
-  // Group settings by section, filter by scope
-  const entries = Object.entries(settingsSchema).filter(
-    ([_, def]) => def.scope !== "dev" || __DEV__,
+  const accentForegroundColor = getThemeColor(
+    "--accent-foreground",
+    colorScheme,
   );
-
-  const sections = entries.reduce<Record<string, SettingsKey[]>>(
-    (acc, [key, def]) => {
-      (acc[def.section] ??= []).push(key as SettingsKey);
-      return acc;
-    },
-    {},
-  );
-
-  // Side effects for specific settings
-  const sideEffects: Partial<Record<SettingsKey, (v: string) => void>> = {
-    user_theme: (v) => setColorScheme(v as "light" | "dark"),
-  };
-
   return (
-    <ScrollView className="flex-1 bg-background px-4">
-      {Object.entries(sections).map(([section, keys]) => (
-        <View key={section}>
-          <Text className="text-foreground text-xl font-semibold mt-6 mb-2">
-            {section}
-          </Text>
-          <View className="h-[1px] w-full bg-border" />
-          {keys.map((key) => (
-            <SettingRow
-              key={key}
-              settingKey={key}
-              onUpdate={sideEffects[key]}
+    <ScrollView className="flex-1 bg-background px-4 pt-4">
+      <View className="gap-4">
+        {Object.entries(settingsSchema).map(([sectionKey, sectionDef]) => (
+          <Pressable
+            key={sectionKey}
+            onPress={() =>
+              router.push({
+                pathname: "/settings/[section]",
+                params: { section: sectionKey },
+              })
+            }
+            className="flex-row items-center justify-between p-4 bg-secondary rounded-xl border border-border active:opacity-70"
+          >
+            <View className="flex-row items-center gap-4">
+              <View className="w-10 h-10 rounded-full bg-accent items-center justify-center">
+                <Ionicons
+                  name={sectionDef.icon as keyof typeof Ionicons.glyphMap}
+                  size={20}
+                  color={accentForegroundColor}
+                />
+              </View>
+              <Text className="text-foreground text-lg font-medium">
+                {sectionDef.title}
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="gray"
+              className="text-muted-foreground"
             />
-          ))}
-        </View>
-      ))}
+          </Pressable>
+        ))}
+      </View>
     </ScrollView>
   );
 }

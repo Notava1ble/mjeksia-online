@@ -15,8 +15,8 @@ export const NAV_THEME = {
     "--secondary-foreground": "215 13.7931% 34.1176%",
     "--muted": "210 20.0000% 98.0392%",
     "--muted-foreground": "220 8.9362% 46.0784%",
-    "--accent": "48.0000 100.0000% 96.0784%",
-    "--accent-foreground": "22.7273 82.5000% 31.3725%",
+    "--accent": "199 89% 96.0784%",
+    "--accent-foreground": "199 89% 30.1961%",
     "--destructive": "0 84.2365% 60.1961%",
     "--destructive-foreground": "0 0% 100%",
     "--border": "220 13.0435% 90.9804%",
@@ -37,8 +37,8 @@ export const NAV_THEME = {
     "--secondary-foreground": "0 0% 89.8039%",
     "--muted": "0 0% 12.1569%",
     "--muted-foreground": "0 0% 63.9216%",
-    "--accent": "22.7273 82.5000% 31.3725%",
-    "--accent-foreground": "48 96.6387% 76.6667%",
+    "--accent": "199 89% 14.9020%",
+    "--accent-foreground": "199 89% 89.8039%",
     "--destructive": "0 84.2365% 60.1961%",
     "--destructive-foreground": "0 0% 100%",
     "--border": "0 0% 25.0980%",
@@ -56,7 +56,7 @@ export const themes = {
 export function getThemeColor(
   color: keyof typeof NAV_THEME.light,
   scheme: "light" | "dark" | undefined,
-  opacity?: number
+  opacity?: number,
 ) {
   const hslValue = NAV_THEME[scheme ?? "light"][color];
 

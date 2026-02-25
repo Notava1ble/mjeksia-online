@@ -20,8 +20,10 @@ export const SubcategoryCard: React.FC<SubcategoryCardProps> = ({
       variant="default"
       onPress={onPress}
       leftElement={
-        <View className="w-10 h-10 rounded-full bg-secondary items-center justify-center mr-4">
-          <Text className="text-foreground font-bold">{index + 1}</Text>
+        <View className="w-10 h-10 rounded-full items-center justify-center mr-4">
+          <Text className="text-card-foreground text-2xl font-bold">
+            {index + 1}
+          </Text>
         </View>
       }
       rightElement={

@@ -1,8 +1,8 @@
 import { getThemeColor } from "@/constants/theme";
 import { questions as questionsSchema } from "@/db/schema";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { InferSelectModel } from "drizzle-orm";
-import { useColorScheme } from "nativewind";
 import React from "react";
 import { Text, View } from "react-native";
 
@@ -15,12 +15,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   index,
 }) => {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
 
-  const accentForegroundColor = getThemeColor(
-    "--accent-foreground",
-    colorScheme,
-  );
+  const accentForegroundColor = getThemeColor("--accent-foreground", theme);
   return (
     <View className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
       <View className="bg-secondary/60 px-5 py-3 flex-row items-center justify-between border-b border-border/50">

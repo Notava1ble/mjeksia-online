@@ -48,17 +48,16 @@ export const NAV_THEME = {
   },
 };
 
-export const themes = {
-  light: vars(NAV_THEME.light),
-  dark: vars(NAV_THEME.dark),
-};
+export const themes = Object.fromEntries(
+  Object.entries(NAV_THEME).map(([key, value]) => [key, vars(value)]),
+) as Record<keyof typeof NAV_THEME, ReturnType<typeof vars>>;
 
 export function getThemeColor(
   color: keyof typeof NAV_THEME.light,
-  scheme: "light" | "dark" | undefined,
+  theme: keyof typeof NAV_THEME,
   opacity?: number,
 ) {
-  const hslValue = NAV_THEME[scheme ?? "light"][color];
+  const hslValue = NAV_THEME[theme][color];
 
   const colorObj = Color(`hsl(${hslValue})`);
 

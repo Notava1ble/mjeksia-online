@@ -10,6 +10,7 @@ import { getThemeColor } from "@/constants/theme";
 import { loadNQuestions } from "@/db/questions";
 import { questions } from "@/db/schema";
 import { insertTestSession } from "@/db/testSessions";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { useCountdownTimer } from "@/hooks/useCountdownTimer";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,6 @@ import { getSetting } from "@/services/settings/settings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { InferSelectModel } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
-import { useColorScheme } from "nativewind";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -37,7 +37,7 @@ const Test = () => {
   const [totalTime] = useState(() => parseFloat(getSetting("test_time")) * 60);
 
   const { drizzleDb } = useDrizzle();
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
 
   const [error, setError] = useState(false);
   const [allQuestions, setAllQuestions] = useState<
@@ -215,7 +215,7 @@ const Test = () => {
         ) : (
           <ActivityIndicator
             size="large"
-            color={getThemeColor("--muted-foreground", colorScheme)}
+            color={getThemeColor("--muted-foreground", theme)}
           />
         )}
       </View>
@@ -262,7 +262,7 @@ const Test = () => {
           {currentQuestion.exam_title}
         </Text>
         <MathText
-          color={getThemeColor("--foreground", colorScheme)}
+          color={getThemeColor("--foreground", theme)}
           text={currentQuestion.question_text}
           className="text-foreground text-lg leading-6 font-medium"
           paddingHorizontal={HORIZONTAL_PADDING * 2}
@@ -324,7 +324,7 @@ const Test = () => {
                       `option_${letter.toLowerCase()}` as keyof typeof currentQuestion
                     ]
                   }`}
-                  color={getThemeColor("--foreground", colorScheme)}
+                  color={getThemeColor("--foreground", theme)}
                   paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
                 />
               </Pressable>
@@ -337,7 +337,7 @@ const Test = () => {
               Shpjegimi:
             </Text>
             <MathText
-              color={getThemeColor("--accent-foreground", colorScheme, 0.9)}
+              color={getThemeColor("--accent-foreground", theme, 0.9)}
               text={currentQuestion.explanation}
               className="text-accent-foreground/90 text-sm"
               fontSize={14}
@@ -361,7 +361,7 @@ const Test = () => {
             size={22}
             color={getThemeColor(
               currentIndex === 0 ? "--muted-foreground" : "--foreground",
-              colorScheme,
+              theme,
             )}
           />
           <Text
@@ -402,7 +402,7 @@ const Test = () => {
                 : isLastQuestion
                   ? "--primary-foreground"
                   : "--foreground",
-              colorScheme,
+              theme,
             )}
           />
         </Pressable>

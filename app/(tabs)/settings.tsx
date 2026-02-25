@@ -1,18 +1,15 @@
 // settings.tsx
 import { getThemeColor } from "@/constants/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { settingsSchema } from "@/services/settings/settings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import { useColorScheme } from "nativewind";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Settings() {
-  const { colorScheme } = useColorScheme();
+  const { theme } = useAppTheme();
 
-  const accentForegroundColor = getThemeColor(
-    "--accent-foreground",
-    colorScheme,
-  );
+  const accentForegroundColor = getThemeColor("--accent-foreground", theme);
   return (
     <ScrollView className="flex-1 bg-background px-4 pt-4">
       <View className="gap-4">

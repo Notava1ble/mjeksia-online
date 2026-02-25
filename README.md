@@ -1,6 +1,6 @@
 # Mjeksia Online
 
-An interactive digital platform built for medical students, and helps them prepare for their exams.
+An interactive digital platform built for medical students, helping them prepare for their exams.
 
 ### ⚠️ Warning
 
@@ -15,7 +15,6 @@ For the time being this app is not available in the Google Play Store. You can d
 - [Features](#features)
 - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
 - [How to Contribute](#how-to-contribute)
-- [Disclaimer](#disclaimer)
 
 ### Features
 
@@ -41,7 +40,7 @@ Yes! The system tracks your session history, giving you the ability to review pa
 **5. Where are the questions from?**
 The questions are gathered from the official question bank provided by [QSHA](https://qsha.gov.al/). You can view the official question bank [here](https://qsha.gov.al/provimi-i-informatizuar-i-mjekesise/).
 
-## 🤝 How to Contribute
+## How to Contribute
 
 We welcome all kinds of feedback and contributions from students and professionals alike!
 

@@ -1,7 +1,7 @@
 import RecentTestList from "@/components/RecentTestList";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { Link } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 export default function Index() {
   const { migrationError, migrationSuccess } = useDrizzle();
@@ -42,11 +42,14 @@ export default function Index() {
               Model Testi
             </Text>
           </Link>
-          <Pressable className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary">
+          <Link
+            href="/bank"
+            className="border border-border p-4 w-[48%] rounded-lg active:bg-secondary"
+          >
             <Text className="text-foreground font-semibold text-lg">
-              W.I.P.
+              Fondi i pyetjeve
             </Text>
-          </Pressable>
+          </Link>
         </View>
       </View>
       <View className="mt-12">

@@ -112,6 +112,14 @@ function Content({
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="bank"
+        options={{
+          title: "Fondi Pyetjeve",
+          animation: "fade",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

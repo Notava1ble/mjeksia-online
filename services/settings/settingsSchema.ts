@@ -27,13 +27,20 @@ export const settingsDefs = {
     type: "select",
     label: "Time per test",
     options: {
-      "50": "50 minuta",
-      "10": "10 min",
+      "0.5": "30 sek",
       "1": "1 min",
-      "0.5": "30 sekonda",
+      "5": "5 min",
+      "10": "10 min",
+      "50": "50 min",
     },
     default: "50",
     scope: "dev",
+  },
+  always_show_image_placeholder: {
+    type: "toggle",
+    label: "Always Show Image Placeholder",
+    description: "Always show the image placeholder even if there is no image.",
+    default: false,
   },
 } as const satisfies Record<string, AnySettingDef>;
 
@@ -73,6 +80,8 @@ export const settingsSchema: SettingsSchema = {
         title: "Arena",
         settings: {
           hide_arena_explanation: settingsDefs.hide_arena_explanation,
+          always_show_image_placeholder:
+            settingsDefs.always_show_image_placeholder,
         },
       },
     },

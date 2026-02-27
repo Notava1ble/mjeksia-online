@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import type { AnySettingDef, SettingsSchema } from "./settingTypes";
 
 // ── Flat registry (single source of truth for types) ────────────────────
@@ -76,17 +77,21 @@ export const settingsSchema: SettingsSchema = {
       },
     },
   },
-  Developer: {
-    title: "Developer Tools",
-    icon: "code-slash-outline",
-    subsections: {
-      Debug: {
-        title: "Debug & Testing",
-        settings: {
-          test_question_amount: settingsDefs.test_question_amount,
-          test_time: settingsDefs.test_time,
+  ...((Constants.expoConfig?.extra?.showDevSettings ?? __DEV__)
+    ? {
+        Developer: {
+          title: "Developer Tools",
+          icon: "code-slash-outline",
+          subsections: {
+            Debug: {
+              title: "Debug & Testing",
+              settings: {
+                test_question_amount: settingsDefs.test_question_amount,
+                test_time: settingsDefs.test_time,
+              },
+            },
+          },
         },
-      },
-    },
-  },
+      }
+    : {}),
 };

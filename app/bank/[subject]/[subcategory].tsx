@@ -37,7 +37,7 @@ export default function BankQuestions() {
         const result = await drizzleDb.query.questions.findMany({
           where: (q, { eq }) => eq(q.exam_title, examTitle),
         });
-        setQuestions(result as any);
+        setQuestions(result);
       } catch (e) {
         console.error("Failed to load questions", e);
         setQuestions([]);

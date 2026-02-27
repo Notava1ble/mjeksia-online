@@ -27,6 +27,7 @@ export default function Arena() {
   const { theme } = useAppTheme();
   const { drizzleDb } = useDrizzle();
   const [hideExplanation] = useSetting("hide_arena_explanation");
+  const [alwaysShowPlaceholder] = useSetting("always_show_image_placeholder");
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
@@ -106,7 +107,7 @@ export default function Arena() {
           horizontalPadding={HORIZONTAL_PADDING * 2}
           className="mt-4"
         />
-        {currentQuestion.image && (
+        {currentQuestion.image ? (
           <Pressable
             onPress={() => setIsImageModalOpen(true)}
             className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
@@ -123,6 +124,19 @@ export default function Arena() {
               </View>
             </View>
           </Pressable>
+        ) : (
+          alwaysShowPlaceholder && (
+            <View className="mt-4 h-52 w-full border-2 border-dashed border-muted rounded-md items-center justify-center bg-muted/20">
+              <Ionicons
+                name="image-outline"
+                size={48}
+                color={getThemeColor("--muted-foreground", theme)}
+              />
+              <Text className="text-muted-foreground mt-2 font-medium">
+                Nuk ka imazh
+              </Text>
+            </View>
+          )
         )}
         <View className="gap-3 mt-6">
           {(["A", "B", "C", "D"] as const).map((letter) => {

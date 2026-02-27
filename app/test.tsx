@@ -272,7 +272,7 @@ const Test = () => {
           horizontalPadding={HORIZONTAL_PADDING * 2}
           className="mt-4"
         />
-        {currentQuestion.image && (
+        {currentQuestion.image ? (
           <Pressable
             onPress={() => setIsImageModalOpen(true)}
             className="mt-4 h-52 w-full border-2 border-muted rounded-md items-center justify-center bg-card/50 overflow-hidden"
@@ -289,6 +289,19 @@ const Test = () => {
               </View>
             </View>
           </Pressable>
+        ) : (
+          getSetting("always_show_image_placeholder") && (
+            <View className="mt-4 h-52 w-full border-2 border-dashed border-muted rounded-md items-center justify-center bg-muted/20">
+              <Ionicons
+                name="image-outline"
+                size={48}
+                color={getThemeColor("--muted-foreground", theme)}
+              />
+              <Text className="text-muted-foreground mt-2 font-medium">
+                Nuk ka imazh
+              </Text>
+            </View>
+          )
         )}
         <View className="gap-3 mt-6">
           {(["A", "B", "C", "D"] as const).map((letter) => {

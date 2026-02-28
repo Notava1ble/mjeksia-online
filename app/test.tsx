@@ -287,7 +287,7 @@ const Test = () => {
           horizontalPadding={HORIZONTAL_PADDING}
         />
         {isFinished && (
-          <View className="mt-4 p-4 bg-secondary rounded-lg border border-secondary/30">
+          <View className="mt-4 p-4 bg-secondary rounded-lg border border-border">
             <Text className="text-secondary-foreground font-bold mb-1">
               Shpjegimi:
             </Text>
@@ -320,14 +320,16 @@ const Test = () => {
             name="arrow-back"
             size={22}
             color={getThemeColor(
-              currentIndex === 0 ? "--muted-foreground" : "--foreground",
+              currentIndex === 0
+                ? "--muted-foreground"
+                : "--secondary-foreground",
               scheme,
               theme,
             )}
           />
           <Text
             className={cn(
-              "font-semibold text-lg text-foreground align-center",
+              "font-semibold text-lg text-secondary-foreground align-center",
               currentIndex === 0 && "text-muted-foreground",
             )}
           >
@@ -346,7 +348,7 @@ const Test = () => {
         >
           <Text
             className={cn(
-              "font-semibold text-lg text-foreground align-center",
+              "font-semibold text-lg text-secondary-foreground align-center",
               isFinished && isLastQuestion
                 ? "text-muted-foreground"
                 : isLastQuestion && "text-primary-foreground",
@@ -362,7 +364,7 @@ const Test = () => {
                 ? "--muted-foreground"
                 : isLastQuestion
                   ? "--primary-foreground"
-                  : "--foreground",
+                  : "--secondary-foreground",
               scheme,
               theme,
             )}

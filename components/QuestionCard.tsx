@@ -31,7 +31,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               {index + 1}
             </Text>
           </View>
-          <Text className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+          <Text className="text-xs font-bold text-secondary-foreground uppercase tracking-widest">
             Pyetja #{question.id}
           </Text>
         </View>

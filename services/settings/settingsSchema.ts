@@ -7,7 +7,7 @@ export const settingsDefs = {
   user_color_scheme: {
     type: "select",
     label: "Theme",
-    options: { Leadgen: "Leadgen", Dracula: "Dracula" },
+    options: { Leadgen: "Leadgen", Dracula: "Dracula", Zen: "Zen" },
     default: "Leadgen",
   },
   user_appearance: {

@@ -53,7 +53,7 @@ const RecentTestList = () => {
             key={test.id}
           >
             <View>
-              <Text className="text-lg font-medium text-secondary-foreground">
+              <Text className="text-lg font-medium text-card-foreground">
                 Model Testi #{test.id}
               </Text>
               <Text className="text-sm text-muted-foreground">

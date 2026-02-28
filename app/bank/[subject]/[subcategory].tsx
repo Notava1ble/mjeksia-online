@@ -93,7 +93,7 @@ export default function BankQuestions() {
       <View className="flex-1 w-full px-5">
         <View className="bg-secondary p-5 rounded-3xl mb-4 flex-row items-center justify-between border border-border">
           <View className="flex-1">
-            <Text className="text-3xl font-black text-foreground">
+            <Text className="text-3xl font-black text-secondary-foreground">
               {isLoading ? "..." : questions.length}
             </Text>
             <Text className="text-muted-foreground font-medium text-base mt-1">
@@ -117,7 +117,7 @@ export default function BankQuestions() {
             <View className="w-20 h-20 rounded-full bg-secondary items-center justify-center mb-6">
               <Ionicons name="search" size={40} color="#a1a1aa" />
             </View>
-            <Text className="text-foreground font-bold text-xl mb-2">
+            <Text className="text-secondary-foreground font-bold text-xl mb-2">
               Nuk u gjetën pyetje
             </Text>
             <Text className="text-muted-foreground text-center px-4">

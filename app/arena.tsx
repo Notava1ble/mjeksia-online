@@ -119,7 +119,7 @@ export default function Arena() {
           horizontalPadding={HORIZONTAL_PADDING}
         />
         {guess && !hideExplanation && (
-          <View className="mt-4 p-4 bg-secondary rounded-lg border border-secondary/30">
+          <View className="mt-4 p-4 bg-secondary rounded-lg border border-border/30">
             <Text className="text-secondary-foreground font-bold mb-1">
               Shpjegimi:
             </Text>

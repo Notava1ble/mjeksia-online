@@ -29,7 +29,7 @@ export default function Index() {
       <View>
         <Link
           href="/arena"
-          className="bg-primary p-4 w-full rounded-lg active:bg-primary/90"
+          className="bg-primary p-4 w-full rounded-lg border border-border active:bg-primary/90"
         >
           <Text className="font-semibold text-lg text-primary-foreground">
             Pyetje te Cfaredoshme

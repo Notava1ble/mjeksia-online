@@ -147,7 +147,20 @@ export default function BankQuestions() {
             maxToRenderPerBatch={10}
             windowSize={5}
             renderItem={({ item: q, index }) => (
-              <QuestionCard question={q} index={index} />
+              <QuestionCard
+                question={q}
+                index={index}
+                onPress={() => {
+                  router.push({
+                    pathname: "/bank/[subject]/[subcategory]/[questionId]",
+                    params: {
+                      subject,
+                      subcategory,
+                      questionId: q.id.toString(),
+                    },
+                  });
+                }}
+              />
             )}
           />
         )}

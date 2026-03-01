@@ -10,6 +10,7 @@ export const settingsDefs = {
     options: [
       { value: "Zen", label: "Zen" },
       { value: "Amber", label: "Amber" },
+      { value: "Minimal", label: "Minimal" },
       { value: "Dracula", label: "Dracula" },
       { value: "Cyberpunk", label: "Cyberpunk" },
       { value: "Catppuccin", label: "Catppuccin" },

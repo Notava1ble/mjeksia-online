@@ -1,17 +1,16 @@
 import { ConfirmModal } from "@/components/modals/ConfirmModal";
 import { OverviewModal } from "@/components/modals/OverviewModal";
+import { NavigationButtons } from "@/components/NavigationButtons";
 import { QuestionDisplay } from "@/components/QuestionDisplay";
 import { TimerHeader } from "@/components/TimerHeader";
 import { getThemeColor } from "@/constants/theme";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useCountdownTimer } from "@/hooks/useCountdownTimer";
 import { useDrizzle } from "@/hooks/useDrizzle";
-import { cn } from "@/lib/utils";
 import { loadNQuestions } from "@/services/db/questions";
 import { questions } from "@/services/db/schema";
 import { insertTestSession } from "@/services/db/testSessions";
 import { getSetting } from "@/services/settings/settings";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { InferSelectModel } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
@@ -225,7 +224,6 @@ const Test = () => {
   return (
     <View className="flex-1 bg-background justify-between">
       <TimerHeader title={"Test"} remainingSeconds={remainingSeconds} />
-
       <OverviewModal
         visible={isOverviewModalOpen}
         correctCount={correctCount}
@@ -233,14 +231,12 @@ const Test = () => {
         onNewTest={restartTest}
         onViewResults={handleViewResults}
       />
-
       <ConfirmModal
         visible={isConfirmModalOpen}
         unansweredCount={unansweredCount}
         onCancel={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirmFinish}
       />
-
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: HORIZONTAL_PADDING,
@@ -257,71 +253,14 @@ const Test = () => {
           horizontalPadding={HORIZONTAL_PADDING}
         />
       </ScrollView>
-
-      <View className="p-6 border-t border-border bg-background flex-row gap-2">
-        <Pressable
-          className={cn(
-            "bg-secondary p-4 flex-1 rounded-lg active:bg-secondary/90 flex-row gap-2 items-center",
-            currentIndex === 0 && "bg-muted",
-          )}
-          onPress={onPrev}
-          disabled={currentIndex === 0}
-        >
-          <Ionicons
-            name="arrow-back"
-            size={22}
-            color={getThemeColor(
-              currentIndex === 0
-                ? "--muted-foreground"
-                : "--secondary-foreground",
-              scheme,
-              theme,
-            )}
-          />
-          <Text
-            className={cn(
-              "font-semibold text-lg text-secondary-foreground align-center",
-              currentIndex === 0 && "text-muted-foreground",
-            )}
-          >
-            Kthehu
-          </Text>
-        </Pressable>
-        <Pressable
-          className={cn(
-            "bg-secondary p-4 flex-1 rounded-lg active:bg-secondary/90 flex-row gap-2 items-center justify-end",
-            isFinished && isLastQuestion
-              ? "bg-muted active:bg-muted/90"
-              : isLastQuestion && "bg-primary active:bg-primary/90",
-          )}
-          onPress={onNext}
-          disabled={isFinished && isLastQuestion}
-        >
-          <Text
-            className={cn(
-              "font-semibold text-lg text-secondary-foreground align-center",
-              isFinished && isLastQuestion
-                ? "text-muted-foreground"
-                : isLastQuestion && "text-primary-foreground",
-            )}
-          >
-            {isLastQuestion && !isFinished ? "Perfundo" : "Perpara"}
-          </Text>
-          <Ionicons
-            name="arrow-forward"
-            size={22}
-            color={getThemeColor(
-              isFinished && isLastQuestion
-                ? "--muted-foreground"
-                : isLastQuestion
-                  ? "--primary-foreground"
-                  : "--secondary-foreground",
-              scheme,
-              theme,
-            )}
-          />
-        </Pressable>
-      </View>
+      <NavigationButtons
+        onPrev={onPrev}
+        onNext={onNext}
+        prevDisabled={currentIndex === 0}
+        nextDisabled={isFinished && isLastQuestion}
+        nextLabel={isLastQuestion && !isFinished ? "Perfundo" : "Perpara"}
+        isNextPrimary={isLastQuestion}
+      />
     </View>
   );
 };

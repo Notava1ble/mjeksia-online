@@ -4,16 +4,18 @@ import { questions as questionsSchema } from "@/services/db/schema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { InferSelectModel } from "drizzle-orm";
 import React from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 interface QuestionCardProps {
   question: InferSelectModel<typeof questionsSchema>;
   index: number;
+  onPress?: () => void;
 }
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   index,
+  onPress,
 }) => {
   const { scheme, theme } = useAppTheme();
 
@@ -23,7 +25,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     theme,
   );
   return (
-    <View className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
+    <Pressable
+      className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm active:opacity-90"
+      onPress={onPress}
+      disabled={!onPress}
+    >
       <View className="bg-secondary/60 px-5 py-3 flex-row items-center justify-between border-b border-border/50">
         <View className="flex-row items-center">
           <View className="w-7 h-7 rounded-full bg-background items-center justify-center mr-3 border border-border">
@@ -71,6 +77,6 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           {question.question_text}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 };

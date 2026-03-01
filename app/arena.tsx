@@ -1,19 +1,13 @@
+import { ContinueButton } from "@/components/ContinueButton";
 import { QuestionDisplay } from "@/components/QuestionDisplay";
 import { getThemeColor } from "@/constants/theme";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { getRandomQuestion } from "@/services/db/questions";
 import { questions } from "@/services/db/schema";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { type InferSelectModel } from "drizzle-orm";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
 
@@ -87,17 +81,7 @@ export default function Arena() {
         />
       </ScrollView>
 
-      <View className="p-6 border-t border-border bg-background">
-        <Pressable
-          className="bg-primary p-4 w-full rounded-lg active:bg-primary/90 flex-row justify-between items-center"
-          onPress={onNext}
-        >
-          <Text className="font-semibold text-lg text-primary-foreground">
-            Continue
-          </Text>
-          <Ionicons name="arrow-forward" size={22} color="black" />
-        </Pressable>
-      </View>
+      <ContinueButton onPress={onNext} label="Pyetja tjetër" />
     </View>
   );
 }

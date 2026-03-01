@@ -11,6 +11,8 @@ export const settingsDefs = {
       { value: "Zen", label: "Zen" },
       { value: "Amber", label: "Amber" },
       { value: "Dracula", label: "Dracula" },
+      { value: "Cyberpunk", label: "Cyberpunk" },
+      { value: "Catppuccin", label: "Catppuccin" },
       { value: "Leadgen", label: "Leadgen" },
       { value: "Brutalist", label: "Brutalist" },
     ],

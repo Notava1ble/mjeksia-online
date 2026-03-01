@@ -34,6 +34,9 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 }) => {
   const { scheme, theme } = useAppTheme();
   const [hideExplanation] = useSetting("hide_arena_explanation");
+  const [showAdvancedReasoning] = useSetting(
+    "show_reasoning_instead_of_explanation",
+  );
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   return (
@@ -78,16 +81,18 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         horizontalPadding={horizontalPadding}
       />
 
-      {isRevealed && !hideExplanation && question.explanation && (
+      {isRevealed && !hideExplanation && (
         <View className="mt-4 p-4 bg-secondary rounded-lg border border-border/30">
           {showExplanationHeader && (
             <Text className="text-secondary-foreground font-bold mb-1">
-              Shpjegimi:
+              {showAdvancedReasoning ? "Arsyetimi:" : "Shpjegimi:"}
             </Text>
           )}
           <MathText
             color={getThemeColor("--secondary-foreground", scheme, theme, 0.9)}
-            text={question.explanation}
+            text={
+              showAdvancedReasoning ? question.reasoning : question.explanation
+            }
             className="text-secondary-foreground/90 text-sm"
             fontSize={14}
             // Account for ScrollView padding + button padding + border

@@ -64,6 +64,12 @@ export const settingsDefs = {
     description: "Always show the image placeholder even if there is no image.",
     default: false,
   },
+  show_reasoning_instead_of_explanation: {
+    type: "toggle",
+    label: "Show advanced reasoning",
+    description: "Show advanced reasoning instead of explanation.",
+    default: true,
+  },
 } as const satisfies Record<string, AnySettingDef>;
 
 // ── Derived types ───────────────────────────────────────────────────────
@@ -107,6 +113,8 @@ export const settingsSchema: SettingsSchema = {
           hide_arena_explanation: settingsDefs.hide_arena_explanation,
           always_show_image_placeholder:
             settingsDefs.always_show_image_placeholder,
+          show_reasoning_instead_of_explanation:
+            settingsDefs.show_reasoning_instead_of_explanation,
         },
       },
     },

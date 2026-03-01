@@ -102,7 +102,7 @@ export const settingsSchema: SettingsSchema = {
     icon: "document-text-outline",
     subsections: {
       Arena: {
-        title: "Arena",
+        title: "Questions",
         settings: {
           hide_arena_explanation: settingsDefs.hide_arena_explanation,
           always_show_image_placeholder:

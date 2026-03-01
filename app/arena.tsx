@@ -1,14 +1,9 @@
-import MarkdownTable from "@/components/MarkdownTable";
-import MathText from "@/components/MathText";
-import { ImageModal } from "@/components/modals/ImageModal";
-import { QuestionImage } from "@/components/QuestionImage";
-import { QuestionOptions } from "@/components/QuestionOptions";
+import { QuestionDisplay } from "@/components/QuestionDisplay";
 import { getThemeColor } from "@/constants/theme";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDrizzle } from "@/hooks/useDrizzle";
 import { getRandomQuestion } from "@/services/db/questions";
 import { questions } from "@/services/db/schema";
-import { useSetting } from "@/services/settings/settings";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { type InferSelectModel } from "drizzle-orm";
 import { useCallback, useEffect, useState } from "react";
@@ -25,9 +20,6 @@ const HORIZONTAL_PADDING = 16;
 export default function Arena() {
   const { scheme, theme } = useAppTheme();
   const { drizzleDb } = useDrizzle();
-  const [hideExplanation] = useSetting("hide_arena_explanation");
-
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const [currentQuestion, setCurrentQuestion] = useState<
     InferSelectModel<typeof questions> | undefined
@@ -78,66 +70,21 @@ export default function Arena() {
 
   return (
     <View className="flex-1 bg-background justify-between">
-      {/* --- IMAGE POPUP --- */}
-      <ImageModal
-        visible={isImageModalOpen}
-        imageKey={currentQuestion.image}
-        onClose={() => setIsImageModalOpen(false)}
-      />
-
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: HORIZONTAL_PADDING,
           paddingBottom: 24,
         }}
       >
-        <Text className="text-muted-foreground mb-2">
-          Pyetja {currentQuestion.subId} - {currentQuestion.exam_title}
-        </Text>
-        <MathText
-          color={getThemeColor("--foreground", scheme, theme)}
-          text={currentQuestion.question_text}
-          className="text-foreground text-lg leading-6 font-medium"
-          paddingHorizontal={HORIZONTAL_PADDING * 2}
-        />
-        <MarkdownTable
-          content={currentQuestion.table_content}
-          horizontalPadding={HORIZONTAL_PADDING * 2}
-          className="mt-4"
-        />
-        <QuestionImage
-          imageKey={currentQuestion.image}
-          onPress={() => setIsImageModalOpen(true)}
-        />
-        <QuestionOptions
-          options={currentQuestion}
-          correctAnswer={currentQuestion.answer}
+        <QuestionDisplay
+          question={currentQuestion}
           selectedOption={guess}
           onOptionPress={onGuess}
           isRevealed={!!guess}
           disabled={!!guess}
+          indexInfo={`Pyetja ${currentQuestion.subId}`}
           horizontalPadding={HORIZONTAL_PADDING}
         />
-        {guess && !hideExplanation && (
-          <View className="mt-4 p-4 bg-secondary rounded-lg border border-border/30">
-            <Text className="text-secondary-foreground font-bold mb-1">
-              Shpjegimi:
-            </Text>
-            <MathText
-              color={getThemeColor(
-                "--secondary-foreground",
-                scheme,
-                theme,
-                0.9,
-              )}
-              text={currentQuestion.explanation}
-              className="text-secondary-foreground/90 text-sm"
-              fontSize={14}
-              // Account for ScrollView padding + button padding + border
-              paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
-            />
-          </View>
-        )}
       </ScrollView>
 
       <View className="p-6 border-t border-border bg-background">

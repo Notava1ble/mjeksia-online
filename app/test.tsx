@@ -1,10 +1,6 @@
-import MarkdownTable from "@/components/MarkdownTable";
-import MathText from "@/components/MathText";
 import { ConfirmModal } from "@/components/modals/ConfirmModal";
-import { ImageModal } from "@/components/modals/ImageModal";
 import { OverviewModal } from "@/components/modals/OverviewModal";
-import { QuestionImage } from "@/components/QuestionImage";
-import { OptionLetter, QuestionOptions } from "@/components/QuestionOptions";
+import { QuestionDisplay } from "@/components/QuestionDisplay";
 import { TimerHeader } from "@/components/TimerHeader";
 import { getThemeColor } from "@/constants/theme";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -49,7 +45,6 @@ const Test = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isOverviewModalOpen, setIsOverviewModalOpen] = useState(false);
 
@@ -128,7 +123,7 @@ const Test = () => {
   }, [loadNewQuestion]);
 
   const onGuess = useCallback(
-    (letter: OptionLetter, index: number) => {
+    (letter: "A" | "B" | "C" | "D", index: number) => {
       if (!isFinished) {
         setGuesses((prev) => {
           if (prev[index] === letter) return prev;
@@ -246,65 +241,21 @@ const Test = () => {
         onConfirm={handleConfirmFinish}
       />
 
-      <ImageModal
-        visible={isImageModalOpen}
-        imageKey={currentQuestion.image}
-        onClose={() => setIsImageModalOpen(false)}
-      />
-
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: HORIZONTAL_PADDING,
           paddingBottom: 24,
         }}
       >
-        <Text className="text-muted-foreground mb-2">
-          Pyetja {currentIndex + 1} / {numberOfQuestions} -{" "}
-          {currentQuestion.exam_title}
-        </Text>
-        <MathText
-          color={getThemeColor("--foreground", scheme, theme)}
-          text={currentQuestion.question_text}
-          className="text-foreground text-lg leading-6 font-medium"
-          paddingHorizontal={HORIZONTAL_PADDING * 2}
-        />
-        <MarkdownTable
-          content={currentQuestion.table_content}
-          horizontalPadding={HORIZONTAL_PADDING * 2}
-          className="mt-4"
-        />
-        <QuestionImage
-          imageKey={currentQuestion.image}
-          onPress={() => setIsImageModalOpen(true)}
-        />
-        <QuestionOptions
-          options={currentQuestion}
-          correctAnswer={currentQuestion.answer}
+        <QuestionDisplay
+          question={currentQuestion}
           selectedOption={currentGuess}
           onOptionPress={(letter) => onGuess(letter, currentIndex)}
           isRevealed={isFinished}
           disabled={isFinished}
+          indexInfo={`Pyetja ${currentIndex + 1} / ${numberOfQuestions}`}
           horizontalPadding={HORIZONTAL_PADDING}
         />
-        {isFinished && (
-          <View className="mt-4 p-4 bg-secondary rounded-lg border border-border">
-            <Text className="text-secondary-foreground font-bold mb-1">
-              Shpjegimi:
-            </Text>
-            <MathText
-              color={getThemeColor(
-                "--secondary-foreground",
-                scheme,
-                theme,
-                0.9,
-              )}
-              text={currentQuestion.explanation}
-              className="text-secondary-foreground/90 text-sm"
-              fontSize={14}
-              paddingHorizontal={HORIZONTAL_PADDING * 2 + 16 * 2 + 1}
-            />
-          </View>
-        )}
       </ScrollView>
 
       <View className="p-6 border-t border-border bg-background flex-row gap-2">

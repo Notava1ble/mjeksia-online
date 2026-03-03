@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "Mjeksia Online",
   slug: "mjeksia-online",
-  version: "0.4.1",
+  version: "0.5.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "mjeksiaonline",

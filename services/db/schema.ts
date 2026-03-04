@@ -37,6 +37,8 @@ export const testSessions = sqliteTable("test_sessions", {
   is_completed: int("is_completed", { mode: "boolean" })
     .notNull()
     .default(false),
+  topic: text("topic"),
+  test_type: text("test_type").$type<"focus" | "mock">().default("mock"),
 });
 
 export const userAnswers = sqliteTable("user_answers", {
@@ -52,6 +54,11 @@ export const userAnswers = sqliteTable("user_answers", {
     "A" | "B" | "C" | "D" | null
   >(),
   is_correct: int("is_correct", { mode: "boolean" }).notNull(),
+  answered_at: int("answered_at"),
+  seconds_spend: int("seconds_spend").default(0),
+  correct_option: text("correct_option")
+    .$type<"A" | "B" | "C" | "D">()
+    .notNull(),
 });
 
 export const math_svgs = sqliteTable("math_svgs", {

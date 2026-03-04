@@ -5,6 +5,7 @@ interface UseCountdownTimerOptions {
   totalSeconds: number;
   hapticCountdownSeconds?: number;
   onTimeUp?: (remainingSeconds: number) => void;
+  onTick?: (remainingSeconds: number) => void;
 }
 
 interface UseCountdownTimerReturn {
@@ -18,17 +19,23 @@ export const useCountdownTimer = ({
   totalSeconds,
   hapticCountdownSeconds = 5,
   onTimeUp,
+  onTick,
 }: UseCountdownTimerOptions): UseCountdownTimerReturn => {
   const [remainingSeconds, setRemainingSeconds] = useState(totalSeconds);
   const [timerKey, setTimerKey] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const onTimeUpRef = useRef(onTimeUp);
+  const onTickRef = useRef(onTick);
 
   // Keep the callback ref updated without triggering effect re-runs
   useEffect(() => {
     onTimeUpRef.current = onTimeUp;
   }, [onTimeUp]);
+
+  useEffect(() => {
+    onTickRef.current = onTick;
+  }, [onTick]);
 
   useEffect(() => {
     setRemainingSeconds(totalSeconds);
@@ -51,6 +58,8 @@ export const useCountdownTimer = ({
         if (newValue >= 1 && newValue <= hapticCountdownSeconds) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         }
+
+        onTickRef.current?.(newValue);
 
         return newValue;
       });

@@ -77,10 +77,22 @@ const FocusTest = () => {
       guesses: ("A" | "B" | "C" | "D" | undefined)[],
       completed: boolean,
       timeLeft: number,
+      answeredAt: (number | null)[],
+      timeSpent: number[],
     ) => {
-      await saveTestResult(drizzleDb, questions, guesses, completed, timeLeft);
+      await saveTestResult(
+        drizzleDb,
+        questions,
+        guesses,
+        completed,
+        timeLeft,
+        answeredAt,
+        timeSpent,
+        subcategory || subject,
+        "focus",
+      );
     },
-    [drizzleDb],
+    [drizzleDb, subject, subcategory],
   );
 
   const handleRestart = useCallback(() => {

@@ -15,6 +15,8 @@ interface UseTestEngineOptions {
     guesses: Guess[],
     completed: boolean,
     timeLeft: number,
+    answeredAt: (number | null)[],
+    timeSpent: number[],
   ) => Promise<void>;
   onRestart?: () => void;
 }
@@ -53,6 +55,9 @@ export const useTestEngine = ({
   onRestart,
 }: UseTestEngineOptions): UseTestEngineReturn => {
   const [guesses, setGuesses] = useState<Guess[]>([]);
+  const [answeredAt, setAnsweredAt] = useState<(number | null)[]>([]);
+  const [timeSpent, setTimeSpent] = useState<number[]>([]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
@@ -66,15 +71,24 @@ export const useTestEngine = ({
     setPrevQuestionCount(questionCount);
     if (questionCount > 0) {
       setGuesses(new Array(questionCount).fill(undefined));
+      setAnsweredAt(new Array(questionCount).fill(null));
+      setTimeSpent(new Array(questionCount).fill(0));
     }
   }
 
   const writeToDatabase = useCallback(
     async (completed: boolean, timeLeft: number) => {
       if (!allQuestions || allQuestions.length === 0) return;
-      await onSaveResult(allQuestions, guesses, completed, timeLeft);
+      await onSaveResult(
+        allQuestions,
+        guesses,
+        completed,
+        timeLeft,
+        answeredAt,
+        timeSpent,
+      );
     },
-    [allQuestions, guesses, onSaveResult],
+    [allQuestions, guesses, onSaveResult, answeredAt, timeSpent],
   );
 
   // Handle time up
@@ -88,6 +102,16 @@ export const useTestEngine = ({
     [writeToDatabase],
   );
 
+  const onTick = useCallback(() => {
+    if (!isFinished && !isOverviewModalOpen && questionCount > 0) {
+      setTimeSpent((prev) => {
+        const newTimeSpent = [...prev];
+        newTimeSpent[currentIndex] = (newTimeSpent[currentIndex] || 0) + 1;
+        return newTimeSpent;
+      });
+    }
+  }, [currentIndex, isFinished, isOverviewModalOpen, questionCount]);
+
   const {
     remainingSeconds,
     restart: restartTimer,
@@ -96,6 +120,7 @@ export const useTestEngine = ({
     totalSeconds: totalTime,
     hapticCountdownSeconds: 5,
     onTimeUp: handleTimeUp,
+    onTick,
   });
 
   const onGuess = useCallback(
@@ -109,6 +134,12 @@ export const useTestEngine = ({
           const newGuesses = [...prev];
           newGuesses[index] = letter;
           return newGuesses;
+        });
+        setAnsweredAt((prev) => {
+          if (prev[index] !== null) return prev;
+          const newAnsweredAt = [...prev];
+          newAnsweredAt[index] = remainingSeconds;
+          return newAnsweredAt;
         });
       }
     },
@@ -138,6 +169,8 @@ export const useTestEngine = ({
     setIsFinished(false);
     setCurrentIndex(0);
     setGuesses(new Array(questionCount).fill(undefined));
+    setAnsweredAt(new Array(questionCount).fill(null));
+    setTimeSpent(new Array(questionCount).fill(0));
     restartTimer();
     onRestart?.();
   }, [questionCount, restartTimer, onRestart]);

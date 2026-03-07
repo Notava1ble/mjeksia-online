@@ -128,6 +128,14 @@ function Content({
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="history"
+        options={{
+          title: "Historia Pyetjeve",
+          animation: "fade",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

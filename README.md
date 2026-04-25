@@ -10,12 +10,6 @@ This application only works on Android and does not yet support iOS. Attempting 
 
 For the time being this app is not available in the Google Play Store. You can download the APK file from the [Releases](https://github.com/Notava1ble/mjeksia-online/releases) page, after which you will need to manually sideload it on your device.
 
-## Table of Contents
-
-- [Features](#features)
-- [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
-- [How to Contribute](#how-to-contribute)
-
 ### Features
 
 - **Arena (Pyetje të Çfarëdoshme / Random Questions):** Practice your knowledge by answering random questions on the go. Every question comes with a comprehensive explanation.
@@ -26,7 +20,7 @@ For the time being this app is not available in the Google Play Store. You can d
 ### Frequently Asked Questions (FAQ)
 
 **1. Who is this application for?**
-This app is for medical students in Albania preparing for their state medical licensing exams.
+This app is for medical students in Albania preparing for their state exams.
 
 **2. Does it require an internet connection?**
 No, it does not require an internet connection. The question bank and test history are stored locally on your device.
@@ -42,11 +36,11 @@ The questions are gathered from the official question bank provided by [QSHA](ht
 
 ## How to Contribute
 
-We welcome all kinds of feedback and contributions from students and professionals alike!
+All kinds of feedback and contributions are welcomed!
 
-- **Report Inaccuracies:** Medical science evolves rapidly. If you spot a question with an outdated answer or an incorrect medical explanation, please let us know!
-- **Suggest Improvements:** Have an idea for a new feature? We’d love to hear it.
-- **Open an Issue:** All feedback and bug reports can be tracked via [our GitHub repository Issues page](https://github.com/Notava1ble/mjeksia-online/issues). When reporting, please provide as much context as possible (e.g., question ID, screenshot).
+- **Report Inaccuracies:** If you spot a question with an incorrect explanation, please let me know!
+- **Open an Issue:** All feedback and bug reports can be tracked via [the GitHub repository Issues page](https://github.com/Notava1ble/mjeksia-online/issues). When reporting, please provide as much context as possible (e.g., question ID, screenshot).
+- **Suggest Improvements**
 
 ### Opening an Issue
 

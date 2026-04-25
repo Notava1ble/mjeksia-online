@@ -1,4 +1,3 @@
-import Constants from "expo-constants";
 import type { AnySettingDef, SettingsSchema } from "./settingTypes";
 
 // ── Flat registry (single source of truth for types) ────────────────────
@@ -37,26 +36,43 @@ export const settingsDefs = {
   },
   test_question_amount: {
     type: "select",
-    label: "Questions per test",
+    label: "Numri i pyetjeve",
     options: [
-      { value: "50", label: "50 pyetje" },
       { value: "10", label: "10 pyetje" },
+      { value: "25", label: "25 pyetje" },
+      { value: "50", label: "50 pyetje" },
     ],
     default: "50",
-    scope: "dev",
   },
   test_time: {
     type: "select",
-    label: "Time per test",
+    label: "Koha e testit",
     options: [
-      { value: "0.5", label: "30 sek" },
-      { value: "1", label: "1 min" },
-      { value: "5", label: "5 min" },
       { value: "10", label: "10 min" },
+      { value: "25", label: "25 min" },
       { value: "50", label: "50 min" },
     ],
     default: "50",
-    scope: "dev",
+  },
+  focus_test_question_amount: {
+    type: "select",
+    label: "Numri i pyetjeve",
+    options: [
+      { value: "10", label: "10 pyetje" },
+      { value: "25", label: "25 pyetje" },
+      { value: "50", label: "50 pyetje" },
+    ],
+    default: "50",
+  },
+  focus_test_time: {
+    type: "select",
+    label: "Koha e testit",
+    options: [
+      { value: "10", label: "10 min" },
+      { value: "25", label: "25 min" },
+      { value: "50", label: "50 min" },
+    ],
+    default: "50",
   },
   always_show_image_placeholder: {
     type: "toggle",
@@ -117,23 +133,20 @@ export const settingsSchema: SettingsSchema = {
             settingsDefs.show_reasoning_instead_of_explanation,
         },
       },
+      ModelTesti: {
+        title: "Model Testi",
+        settings: {
+          test_question_amount: settingsDefs.test_question_amount,
+          test_time: settingsDefs.test_time,
+        },
+      },
+      FocusTest: {
+        title: "Teste te fokusuara",
+        settings: {
+          focus_test_question_amount: settingsDefs.focus_test_question_amount,
+          focus_test_time: settingsDefs.focus_test_time,
+        },
+      },
     },
   },
-  ...((Constants.expoConfig?.extra?.showDevSettings ?? __DEV__)
-    ? {
-        Developer: {
-          title: "Developer Tools",
-          icon: "code-slash-outline",
-          subsections: {
-            Debug: {
-              title: "Debug & Testing",
-              settings: {
-                test_question_amount: settingsDefs.test_question_amount,
-                test_time: settingsDefs.test_time,
-              },
-            },
-          },
-        },
-      }
-    : {}),
 };

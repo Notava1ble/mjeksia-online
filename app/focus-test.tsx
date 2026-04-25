@@ -30,9 +30,11 @@ const FocusTest = () => {
     subcategory?: string;
   }>();
 
-  const [totalTime] = useState(() => parseFloat(getSetting("test_time")) * 60);
+  const [totalTime] = useState(
+    () => parseFloat(getSetting("focus_test_time")) * 60,
+  );
   const [numberOfQuestions] = useState(() =>
-    parseInt(getSetting("test_question_amount"), 10),
+    parseInt(getSetting("focus_test_question_amount"), 10),
   );
   const { drizzleDb } = useDrizzle();
   const { scheme, theme } = useAppTheme();

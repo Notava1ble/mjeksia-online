@@ -1,4 +1,5 @@
 import { useDrizzle } from "@/hooks/useDrizzle";
+import { buildQuestionBankHref } from "@/lib/question-bank-route";
 import { getUserMistakes } from "@/services/db/history";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -86,11 +87,18 @@ export default function MistakesList() {
             {mistakes.map((item: any, index: number) => {
               const q = item.question;
               const a = item.userAnswer;
+              const questionHref = buildQuestionBankHref(q);
 
               return (
-                <View
+                <Pressable
                   key={index}
-                  className="bg-card p-4 rounded-2xl border border-destructive/30"
+                  disabled={!questionHref}
+                  onPress={() => {
+                    if (questionHref) {
+                      router.push(questionHref);
+                    }
+                  }}
+                  className="bg-card p-4 rounded-2xl border border-destructive/30 active:opacity-70"
                 >
                   <Text className="text-foreground font-medium text-lg">
                     {index + 1}. {q.question_text}
@@ -115,7 +123,7 @@ export default function MistakesList() {
                       </Text>
                     </View>
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>

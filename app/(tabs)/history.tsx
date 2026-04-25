@@ -28,6 +28,7 @@ export default function History() {
     accuracyRate: 0,
     correctAnswers: 0,
     totalAnswers: 0,
+    activeMistakes: 0,
   });
   const [sessions, setSessions] = useState<
     Awaited<ReturnType<typeof getTestSessionsSimple>>
@@ -148,7 +149,7 @@ export default function History() {
                   Rishiko Gabimet
                 </Text>
                 <Text className="text-sm text-muted-foreground mt-1">
-                  {`${stats.totalAnswers - stats.correctAnswers} gabime në total. Klijo këtu për t'i parë dhe testuar.`}
+                  {`${stats.activeMistakes} gabime aktive. Klijo këtu për t'i parë dhe testuar.`}
                 </Text>
               </View>
             </View>

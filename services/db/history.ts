@@ -1,6 +1,17 @@
-import { asc, avg, count, desc, eq, sql, sum } from "drizzle-orm";
+import { asc, avg, count, desc, eq, max, sql, sum } from "drizzle-orm";
 import { questions, testSessions, userAnswers } from "./schema";
 import { DbType } from "./types";
+
+function latestAnswersSubquery(db: DbType) {
+  return db
+    .select({
+      questionId: userAnswers.questionId,
+      latestAnswerId: max(userAnswers.id).as("latest_answer_id"),
+    })
+    .from(userAnswers)
+    .groupBy(userAnswers.questionId)
+    .as("latest_answers");
+}
 
 export async function getOverallStatistics(db: DbType) {
   // Aggregate data from testSessions
@@ -34,12 +45,22 @@ export async function getOverallStatistics(db: DbType) {
     })
     .from(userAnswers);
 
+  const latestAnswers = latestAnswersSubquery(db);
+  const activeMistakesStats = await db
+    .select({
+      activeMistakes: count(userAnswers.id),
+    })
+    .from(userAnswers)
+    .innerJoin(latestAnswers, eq(userAnswers.id, latestAnswers.latestAnswerId))
+    .where(eq(userAnswers.is_correct, false));
+
   const testCount = sessionStats[0]?.totalTests || 0;
   const avgScore = sessionStats[0]?.averageScore || 0;
 
   const timeSpent = Number(answersStats[0]?.totalTimeSpentSeconds || 0);
   const totalAnswers = answersStats[0]?.totalAnswers || 0;
   const correctAnswers = Number(answersStats[0]?.correctAnswers || 0);
+  const activeMistakes = activeMistakesStats[0]?.activeMistakes || 0;
 
   const accuracyRate = totalAnswers > 0 ? correctAnswers / totalAnswers : 0;
 
@@ -50,6 +71,7 @@ export async function getOverallStatistics(db: DbType) {
     accuracyRate,
     correctAnswers,
     totalAnswers,
+    activeMistakes,
   };
 }
 
@@ -94,37 +116,21 @@ export async function getTestSessionDetails(db: DbType, sessionId: number) {
 }
 
 export async function getUserMistakes(db: DbType) {
-  // Get all user answers that are incorrect, joined with the actual questions
+  const latestAnswers = latestAnswersSubquery(db);
+
+  // Get questions whose latest saved answer is incorrect.
   return await db
     .select({
       userAnswer: userAnswers,
       question: questions,
     })
     .from(userAnswers)
-    .innerJoin(questions, eq(userAnswers.questionId, questions.id))
-    .where(eq(userAnswers.is_correct, false))
-    .orderBy(desc(userAnswers.answered_at));
-}
-
-export async function getUniqueUserMistakes(db: DbType) {
-  const mistakes = await db
-    .select({
-      userAnswer: userAnswers,
-      question: questions,
-    })
-    .from(userAnswers)
+    .innerJoin(latestAnswers, eq(userAnswers.id, latestAnswers.latestAnswerId))
     .innerJoin(questions, eq(userAnswers.questionId, questions.id))
     .where(eq(userAnswers.is_correct, false))
     .orderBy(desc(userAnswers.id));
+}
 
-  const seenQuestionIds = new Set<number>();
-
-  return mistakes.filter(({ question }) => {
-    if (seenQuestionIds.has(question.id)) {
-      return false;
-    }
-
-    seenQuestionIds.add(question.id);
-    return true;
-  });
+export async function getUniqueUserMistakes(db: DbType) {
+  return await getUserMistakes(db);
 }

@@ -52,10 +52,15 @@ export default function MistakesList() {
         {mistakes.length > 0 ? (
           <Pressable
             className="bg-primary p-4 rounded-xl items-center justify-center active:opacity-90 flex-row gap-2"
-            onPress={() => alert("Krijimi i testit vjen së shpejti!")}
+            onPress={() =>
+              router.push({
+                pathname: "/retest",
+                params: { mode: "mistakes" },
+              })
+            }
           >
             <Ionicons
-              name="construct"
+              name="refresh-circle"
               size={20}
               className="text-primary-foreground"
               color="white"

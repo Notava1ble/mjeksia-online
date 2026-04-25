@@ -1,4 +1,4 @@
-import { avg, count, desc, eq, sql, sum } from "drizzle-orm";
+import { asc, avg, count, desc, eq, sql, sum } from "drizzle-orm";
 import { questions, testSessions, userAnswers } from "./schema";
 import { DbType } from "./types";
 
@@ -84,7 +84,8 @@ export async function getTestSessionDetails(db: DbType, sessionId: number) {
     })
     .from(userAnswers)
     .innerJoin(questions, eq(userAnswers.questionId, questions.id))
-    .where(eq(userAnswers.sessionId, sessionId));
+    .where(eq(userAnswers.sessionId, sessionId))
+    .orderBy(asc(userAnswers.id));
 
   return {
     ...session,
@@ -103,4 +104,27 @@ export async function getUserMistakes(db: DbType) {
     .innerJoin(questions, eq(userAnswers.questionId, questions.id))
     .where(eq(userAnswers.is_correct, false))
     .orderBy(desc(userAnswers.answered_at));
+}
+
+export async function getUniqueUserMistakes(db: DbType) {
+  const mistakes = await db
+    .select({
+      userAnswer: userAnswers,
+      question: questions,
+    })
+    .from(userAnswers)
+    .innerJoin(questions, eq(userAnswers.questionId, questions.id))
+    .where(eq(userAnswers.is_correct, false))
+    .orderBy(desc(userAnswers.id));
+
+  const seenQuestionIds = new Set<number>();
+
+  return mistakes.filter(({ question }) => {
+    if (seenQuestionIds.has(question.id)) {
+      return false;
+    }
+
+    seenQuestionIds.add(question.id);
+    return true;
+  });
 }

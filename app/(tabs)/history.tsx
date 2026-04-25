@@ -148,8 +148,7 @@ export default function History() {
                   Rishiko Gabimet
                 </Text>
                 <Text className="text-sm text-muted-foreground mt-1">
-                  {stats.totalAnswers - stats.correctAnswers} gabime në total.
-                  Klijo këtu për t'i parë dhe testuar.
+                  {`${stats.totalAnswers - stats.correctAnswers} gabime në total. Klijo këtu për t'i parë dhe testuar.`}
                 </Text>
               </View>
             </View>

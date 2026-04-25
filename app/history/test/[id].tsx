@@ -81,13 +81,21 @@ export default function TestDetails() {
           </View>
         </View>
 
-        {/* Retake Button Placeholder */}
+        {/* Retake Button */}
         <Pressable
           className="bg-primary p-4 rounded-xl items-center justify-center active:opacity-90 mt-2"
-          onPress={() => alert("Funksionaliteti për ritestim vjen së shpejti!")}
+          onPress={() =>
+            router.push({
+              pathname: "/retest",
+              params: {
+                mode: "session",
+                sessionId: details.id.toString(),
+              },
+            })
+          }
         >
           <Text className="text-primary-foreground font-bold text-lg">
-            Retesto (Vjen Së Shpejti)
+            Retesto
           </Text>
         </Pressable>
 

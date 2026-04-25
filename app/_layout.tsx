@@ -121,6 +121,14 @@ function Content({
         }}
       />
       <Stack.Screen
+        name="retest"
+        options={{
+          title: "Retest",
+          animation: "fade",
+          headerShown: true,
+        }}
+      />
+      <Stack.Screen
         name="bank"
         options={{
           title: "Fondi Pyetjeve",

@@ -1,4 +1,5 @@
 import { useDrizzle } from "@/hooks/useDrizzle";
+import { buildQuestionBankHref } from "@/lib/question-bank-route";
 import { formatDate } from "@/lib/utils";
 import { getTestSessionDetails } from "@/services/db/history";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -99,10 +100,18 @@ export default function TestDetails() {
             {details.answers.map((item: any, index: number) => {
               const q = item.question;
               const a = item.userAnswer;
+              const questionHref = buildQuestionBankHref(q);
+
               return (
-                <View
+                <Pressable
                   key={index}
-                  className="bg-card p-4 rounded-2xl border border-border"
+                  disabled={!questionHref}
+                  onPress={() => {
+                    if (questionHref) {
+                      router.push(questionHref);
+                    }
+                  }}
+                  className="bg-card p-4 rounded-2xl border border-border active:opacity-70"
                 >
                   <Text className="text-foreground font-medium text-lg">
                     {index + 1}. {q.question_text}
@@ -141,7 +150,7 @@ export default function TestDetails() {
                       </View>
                     )}
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>

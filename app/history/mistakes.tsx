@@ -59,12 +59,6 @@ export default function MistakesList() {
               })
             }
           >
-            <Ionicons
-              name="refresh-circle"
-              size={20}
-              className="text-primary-foreground"
-              color="white"
-            />
             <Text className="text-primary-foreground font-bold text-lg">
               Testo Vetëm Gabimet
             </Text>

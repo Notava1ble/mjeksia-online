@@ -75,14 +75,14 @@ export default function History() {
             </Text>
             <View className="flex-row flex-wrap justify-between gap-y-4">
               <View className="w-[48%] bg-card p-4 rounded-2xl border border-border items-center justify-center">
-                <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mb-2">
+                {/* <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mb-2">
                   <Ionicons
                     name="document-text"
                     size={20}
                     className="text-primary"
                     color="gray"
                   />
-                </View>
+                </View> */}
                 <Text className="text-2xl font-bold text-foreground">
                   {stats.totalTests}
                 </Text>
@@ -92,9 +92,9 @@ export default function History() {
               </View>
 
               <View className="w-[48%] bg-card p-4 rounded-2xl border border-border items-center justify-center">
-                <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mb-2">
+                {/* <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mb-2">
                   <Ionicons name="analytics" size={20} color="#22c55e" />
-                </View>
+                </View> */}
                 <Text className="text-2xl font-bold text-foreground">
                   {(stats.accuracyRate * 100).toFixed(1)}%
                 </Text>
@@ -104,9 +104,9 @@ export default function History() {
               </View>
 
               <View className="w-[48%] bg-card p-4 rounded-2xl border border-border items-center justify-center">
-                <View className="w-10 h-10 rounded-full bg-amber-500/20 items-center justify-center mb-2">
+                {/* <View className="w-10 h-10 rounded-full bg-amber-500/20 items-center justify-center mb-2">
                   <Ionicons name="time" size={20} color="#f59e0b" />
-                </View>
+                </View> */}
                 <Text className="text-2xl font-bold text-foreground">
                   {formatTime(stats.totalTimeSpentSeconds)}
                 </Text>
@@ -116,9 +116,9 @@ export default function History() {
               </View>
 
               <View className="w-[48%] bg-card p-4 rounded-2xl border border-border items-center justify-center">
-                <View className="w-10 h-10 rounded-full bg-purple-500/20 items-center justify-center mb-2">
+                {/* <View className="w-10 h-10 rounded-full bg-purple-500/20 items-center justify-center mb-2">
                   <Ionicons name="checkmark-circle" size={20} color="#a855f7" />
-                </View>
+                </View> */}
                 <Text className="text-2xl font-bold text-foreground">
                   {stats.averageScore.toFixed(0)}
                 </Text>
@@ -189,7 +189,9 @@ export default function History() {
                       </Text>
                       <Text className="text-sm text-muted-foreground mt-1">
                         {formatDate(test.createdAt)}
-                        {test.topic ? ` • ${truncateString(test.topic, 20)}` : ""}
+                        {test.topic
+                          ? ` • ${truncateString(test.topic, 20)}`
+                          : ""}
                       </Text>
                     </View>
                     <View
